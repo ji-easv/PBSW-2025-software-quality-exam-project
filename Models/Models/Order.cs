@@ -1,13 +1,26 @@
+using System.ComponentModel.DataAnnotations;
+using Models.Util;
+
 namespace Models.Models;
 
 public class Order
 {
-    public Guid Id { get; set; }
-    public DateTime CreatedAt { get; set; }
+    [Key]
+    public required Guid Id { get; set; }
+    
+    public required DateTime CreatedAt { get; set; }
+    
     public DateTime? UpdatedAt { get; set; }
-    public Dictionary<Guid, int> Boxes { get; set; } = new();
-    public Customer? Customer { get; set; }
-    public ShippingStatus ShippingStatus { get; set; }
-    public decimal TotalPrice { get; set; }
-    public int TotalBoxes { get; set; }
+    
+    public List<Box> Boxes { get; set; } = [];
+    
+    public required Customer Customer { get; set; }
+    
+    public required ShippingStatus ShippingStatus { get; set; }
+   
+    [PositiveNumber]
+    public required float TotalPrice { get; set; }
+    
+    [PositiveNumber]
+    public required int TotalBoxes { get; set; }
 }

@@ -2,7 +2,7 @@ namespace Models.Util;
 
 public enum FilterTypes
 {
-    Colour,
+    Color,
     Material,
     Weight,
     Length,

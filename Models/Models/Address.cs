@@ -1,12 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+using Models.Util;
+
 namespace Models.Models;
 
 public class Address
 {
-    public Guid Id { get; set; }
-    public string? StreetName { get; set; }
-    public int HouseNumber { get; set; }
-    public string HouseNumberAddition { get; set; } = string.Empty;
-    public string? City { get; set; }
-    public string? Country { get; set; }
-    public string? PostalCode { get; set; }
+    [Key]
+    public required Guid Id { get; set; }
+    
+    [Length(1, 100)]
+    public required string StreetName { get; set; }
+    
+    [PositiveNumber]
+    public required int HouseNumber { get; set; }
+    
+    public required string City { get; set; }
+    
+    public required string Country { get; set; }
+    
+    [PositiveNumber]
+    public required string PostalCode { get; set; }
+    
+    public string? HouseNumberAddition { get; set; }
 }

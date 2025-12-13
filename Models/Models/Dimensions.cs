@@ -5,19 +5,19 @@ namespace Models.Models;
 
 public class Dimensions
 {
-    public Guid Id { get; set; }
+    [Key]
+    public required Guid Id { get; set; }
+    
+    [PositiveNumber]
+    public required float Length { get; set; }
     
     [Required]
     [PositiveNumber]
-    public float Length { get; set; }
+    public required float Width { get; set; }
     
     [Required]
     [PositiveNumber]
-    public float Width { get; set; }
-    
-    [Required]
-    [PositiveNumber]
-    public float Height { get; set; }
+    public required float Height { get; set; }
     
     public float Volume => Length * Width * Height;
     public float SurfaceArea => 2 * (Length * Width + Length * Height + Width * Height);

@@ -5,22 +5,23 @@ namespace Models.Models;
 
 public class Box
 {
-    public Guid Id { get; set; }
+    [Key]
+    public required Guid Id { get; set; }
     
-    [Required]
     [PositiveNumber]
-    public float Weight { get; set; }
+    public required float Weight { get; set; }
     
-    public string? Colour { get; set; }
+    [Length(1, 50)]
+    public string? Color { get; set; }
+    [Length(1, 50)]
     public string? Material { get; set; }
     public Dimensions? Dimensions { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public required DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     
-    [Required]
-    [Range(0, int.MaxValue)]
-    public int Stock { get; set; }
-    
-    [Required]
     [PositiveNumber]
-    public float Price { get; set; }
+    public required int Stock { get; set; }
+    
+    [PositiveNumber]
+    public required float Price { get; set; }
 }

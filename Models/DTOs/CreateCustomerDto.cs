@@ -17,7 +17,7 @@ public class CreateCustomerDto
     public string Email { get; set; } = null!;
     
     [Required]
-    public CreateAddressDto Address { get; set; } = null!;
+    public CreateAddressDto CreateAddressDto { get; set; } = null!;
     
     [Required]
     [MinLength(8)]

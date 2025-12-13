@@ -1,32 +1,38 @@
-using System.Data;
-using System.Diagnostics;
 using System.Text.Json.Serialization;
 using BoxFactoryAPI;
 using BoxFactoryAPI.Exceptions;
 using Core.Mapping;
 using Core.Services;
+using Core.Services.Interfaces;
 using Infrastructure;
-using Npgsql;
+using Infrastructure.Implementations;
+using Infrastructure.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddScoped<IDbConnection>(container =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    var connection = new NpgsqlConnection(Environment.GetEnvironmentVariable("box_conn"));
-    connection.Open();
-    return connection;
+    var connectionString = builder.Configuration.GetConnectionString("BoxFactoryDatabase") ?? throw new InvalidOperationException("Connection string 'BoxFactoryDatabase' not found.");;
+    options.UseNpgsql(connectionString);
 });
 
-builder.Services.AddScoped<BoxRepository>();
-builder.Services.AddScoped<OrderRepository>();
-builder.Services.AddScoped<StatsRepository>();
-builder.Services.AddScoped<BoxService>();
-builder.Services.AddControllers(options => options.Filters.Add<ExceptionFilter>());
-builder.Services.AddScoped<OrderService>();
-builder.Services.AddScoped<StatsService>();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.Services.AddScoped<IBoxRepository, BoxRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IStatsRepository, StatsRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+builder.Services.AddScoped<IBoxService, BoxService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IStatsService, StatsService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 builder.Services.AddScoped<DbInitialize>();
+
+builder.Services.AddControllers();
 
 builder.Services.AddControllers().AddJsonOptions(options => 
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -45,20 +51,16 @@ app.UseCors(options =>
         .AllowCredentials();
 });
 
-app.UseExceptionHandler(a => a.Run(async context => {
-    var trace = Activity.Current?.Id ?? context.TraceIdentifier;
-    const int statusCode = StatusCodes.Status500InternalServerError;
-
-    context.Response.StatusCode = statusCode;
-    await context.Response.WriteAsJsonAsync(
-        new ErrorResponse("", statusCode, trace, "Something went wrong"));
-}));
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.MigrateAsync();
+    
     if (args.Contains("db-init") || args.Contains("--db-init"))
     {
-        using var scope = app.Services.CreateScope();
         var dbInitializer = scope.ServiceProvider.GetRequiredService<DbInitialize>();
         await dbInitializer.InitializeData();
     }

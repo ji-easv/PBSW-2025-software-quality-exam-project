@@ -1,27 +1,12 @@
-using Infrastructure;
-using Models.DTOs;
+using Core.Services.Interfaces;
+using Infrastructure.Interfaces;
 
 namespace Core.Services;
 
-public class StatsService
+public class StatsService(IStatsRepository statsRepository) : IStatsService
 {
-    private readonly StatsRepository _statsRepository;
-    
-    public StatsService(StatsRepository statsRepository)
+    public async Task<Dictionary<int, int>> GetAggregatedMonthlyStatsAsync()
     {
-        _statsRepository = statsRepository;
-    }
-    
-    public async Task<Dictionary<int, int>> GetStats()
-    {
-        try
-        {
-            return await _statsRepository.GetStats();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message, e.InnerException, "Error getting stats");
-            throw;
-        }
+        return await statsRepository.GetAggregatedMonthlyStatsAsync();
     }
 }

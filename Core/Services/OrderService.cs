@@ -1,102 +1,88 @@
-﻿using Infrastructure;
-using Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Core.Services.Interfaces;
+using Infrastructure.Interfaces;
 using Models.DTOs;
+using Models.Exceptions;
 using Models.Models;
 
 namespace Core.Services;
 
-public class OrderService
+public class OrderService(
+    IOrderRepository orderRepository,
+    ICustomerService customerService,
+    IBoxService boxService) : IOrderService
 {
-    private readonly OrderRepository _orderRepository;
-
-    public OrderService(OrderRepository orderRepository)
+    public async Task<Order> CreateAsync(OrderCreateDto orderCreateDto)
     {
-        _orderRepository = orderRepository;
+        if (orderCreateDto.Boxes.Count == 0) throw new ValidationException("No boxes in order.");
+        
+        var customer = await customerService.GetCustomerByEmailAsync(orderCreateDto.CustomerEmail);
+        var boxes = (await boxService.GetBoxesForOderAsync(orderCreateDto.Boxes)).ToList();
+        var totalPrice = boxes.Sum(b => b.Price * orderCreateDto.Boxes[b.Id]);
+
+        var order = new Order
+        {
+            Id = Guid.NewGuid(),
+            Customer = customer,
+            Boxes = boxes,
+            TotalPrice = totalPrice,
+            ShippingStatus = ShippingStatus.Received,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            TotalBoxes = orderCreateDto.Boxes.Values.Sum()
+        };
+        return await orderRepository.CreateOrderAsync(order);
     }
 
-    public async Task<Order> Create(OrderCreateDto orderCreateDto, DateTime? date = null)
+    public async Task<IEnumerable<Order>> GetAllAsync()
     {
-        if (orderCreateDto.Boxes.Count == 0) throw new Exception("No boxes in order.");
-        try
-        {
-            return await _orderRepository.Create(orderCreateDto, date);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message, e.InnerException);
-            throw new Exception("Something went wrong while creating order.");
-        }
+        return await orderRepository.GetAllOrdersAsync();
     }
 
-    public async Task<IEnumerable<Order>> Get()
+    public async Task<IEnumerable<Order>> GetByStatusAsync(ShippingStatus status)
     {
-        try
-        {
-            return await _orderRepository.Get();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message, e.InnerException);
-            throw new Exception("Something went wrong while fetching orders.");
-        }
+        return await orderRepository.GetByStatusAsync(status);
     }
 
-    public async Task<IEnumerable<Order>> GetByStatus(ShippingStatus status)
+    public async Task<IEnumerable<Order>> GetLatestAsync()
     {
-        try
-        {
-            return await _orderRepository.GetByStatus(status);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message, e.InnerException);
-            throw new Exception("Something went wrong while fetching these orders.");
-        }
+        return await orderRepository.GetLatestAsync();
     }
 
-    public async Task<IEnumerable<Order>> GetLatest()
+    public Task<int> GetTotalOrdersAsync()
     {
-        return await _orderRepository.GetLatest();
+        throw new NotImplementedException();
     }
 
-    public async Task<int> GetTotalOrders()
+    public Task<decimal> GetTotalRevenueAsync()
     {
-        return await _orderRepository.GetTotalOrders();
+        throw new NotImplementedException();
+    }
+
+    public Task<int> GetTotalBoxesSoldAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Order> UpdateStatusAsync(Guid orderId, ShippingStatus newStatus)
+    {
+        var order = await GetOrderByIdAsync(orderId);
+        
+        order.ShippingStatus = newStatus;
+        order.UpdatedAt = DateTime.UtcNow;
+        
+        return await orderRepository.UpdateOrderAsync(order);
+    }
+
+    public async Task DeleteAsync(Guid orderId)
+    {
+        var order = await GetOrderByIdAsync(orderId);
+        await orderRepository.DeleteOrderAsync(order);
     }
     
-    public async Task<decimal> GetTotalRevenue()
+    private async Task<Order> GetOrderByIdAsync(Guid orderId)
     {
-        return await _orderRepository.GetTotalRevenue();
-    }
-    
-    public async Task<int> GetTotalBoxesSold()
-    {
-        return await _orderRepository.GetTotalBoxesSold();
-    }
-
-    public async Task UpdateStatus(Guid id, ShippingStatusUpdateDto status)
-    {
-        try
-        {
-            await _orderRepository.UpdateStatus(id, status);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message, e.InnerException);
-            throw new Exception("Something went wrong while updating order status.");
-        }
-    }
-
-    public async Task Delete(Guid id)
-    {
-        try
-        {
-            await _orderRepository.Delete(id);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message, e.InnerException);
-            throw new Exception("Something went wrong while deleting order.");
-        }
+        var order = await orderRepository.GetOrderByIdAsync(orderId);
+        return order ?? throw new NotFoundException("Order not found.");
     }
 }
