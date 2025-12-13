@@ -19,10 +19,7 @@ public class CustomerService(ICustomerRepository customerRepository, IMapper map
     public async Task<Customer> CreateCustomerAsync(CreateCustomerDto customerDto)
     {
         var existingCustomer = await customerRepository.GetCustomerByEmailAsync(customerDto.Email);
-        if (existingCustomer != null)
-        {
-            throw new ValidationException("Customer with this email already exists.");
-        }
+        if (existingCustomer != null) throw new ValidationException("Customer with this email already exists.");
 
         var customer = mapper.Map<Customer>(customerDto);
         return await customerRepository.CreateCustomerAsync(customer);

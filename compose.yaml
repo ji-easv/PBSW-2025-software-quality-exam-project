@@ -1,0 +1,22 @@
+﻿services:
+  backend:
+    image: box-factory-api
+    build:
+      context: .
+      dockerfile: BoxFactoryAPI/Dockerfile
+    ports:
+      - "5133:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__BoxFactoryDatabase=Host=db;Database=BoxFactoryDB;Username=boxfactoryuser;Password=boxfactorypassword
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=boxfactoryuser
+      - POSTGRES_PASSWORD=boxfactorypassword
+      - POSTGRES_DB=BoxFactoryDB
+    ports:
+      - "5432:5432"

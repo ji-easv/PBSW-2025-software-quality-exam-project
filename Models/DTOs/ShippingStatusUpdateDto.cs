@@ -5,6 +5,5 @@ namespace Models.DTOs;
 
 public class ShippingStatusUpdateDto
 {
-    [Required]
-    public ShippingStatus ShippingStatus { get; set; }
+    [Required] public ShippingStatus ShippingStatus { get; set; }
 }

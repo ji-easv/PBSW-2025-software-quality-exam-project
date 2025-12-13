@@ -1,7 +1,7 @@
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure;
+namespace Infrastructure.Implementations;
 
 public class StatsRepository(ApplicationDbContext dbContext) : IStatsRepository
 {
@@ -19,16 +19,13 @@ public class StatsRepository(ApplicationDbContext dbContext) : IStatsRepository
                 Boxes = g.Count()
             })
             .ToListAsync();
-    
+
         // Initialize dictionary with 0 for all months (0-indexed)
         var statsDictionary = Enumerable.Range(0, 12).ToDictionary(i => i, i => 0);
-    
+
         // Populate with actual data (convert to 0-indexed)
-        foreach (var stat in stats)
-        {
-            statsDictionary[stat.Month - 1] = stat.Boxes;
-        }
-    
+        foreach (var stat in stats) statsDictionary[stat.Month - 1] = stat.Boxes;
+
         return statsDictionary;
     }
 }

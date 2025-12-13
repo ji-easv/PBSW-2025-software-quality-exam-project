@@ -1,6 +1,6 @@
 using Models.Models;
 
-namespace Models;
+namespace Models.Util;
 
 public class SearchBoxResult
 {

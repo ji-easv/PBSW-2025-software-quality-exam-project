@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Models.Models;
 
-namespace Infrastructure;
+namespace Infrastructure.Implementations;
 
 public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
 {
@@ -45,6 +45,4 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
         dbContext.Orders.Remove(order);
         return dbContext.SaveChangesAsync();
     }
-    
-    
 }

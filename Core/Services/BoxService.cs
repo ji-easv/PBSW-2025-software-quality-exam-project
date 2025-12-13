@@ -40,10 +40,8 @@ public class BoxService(IBoxRepository boxRepository, IMapper mapper) : IBoxServ
         {
             var requiredQuantity = boxQuantities[box.Id];
             if (box.Stock < requiredQuantity)
-            {
                 throw new ValidationException(
                     $"Box with id {box.Id} does not have enough stock. Required: {requiredQuantity}, Available: {box.Stock}");
-            }
         }
 
         return boxes;
@@ -63,17 +61,13 @@ public class BoxService(IBoxRepository boxRepository, IMapper mapper) : IBoxServ
     public Task<Box> CreateBoxAsync(BoxCreateDto boxCreateDto)
     {
         var box = mapper.Map<Box>(boxCreateDto);
-        
+
         if (box.Color is not null && !_supportedColors.Contains(box.Color.ToLower()))
-        {
             throw new ValidationException($"Color '{box.Color}' is not supported.");
-        }
-        
+
         if (box.Material is not null && !_supportedMaterials.Contains(box.Material.ToLower()))
-        {
             throw new ValidationException($"Material '{box.Material}' is not supported.");
-        }
-        
+
         box.CreatedAt = DateTime.UtcNow;
         return boxRepository.CreateBoxAsync(box);
     }

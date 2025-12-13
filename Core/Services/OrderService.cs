@@ -15,7 +15,7 @@ public class OrderService(
     public async Task<Order> CreateAsync(OrderCreateDto orderCreateDto)
     {
         if (orderCreateDto.Boxes.Count == 0) throw new ValidationException("No boxes in order.");
-        
+
         var customer = await customerService.GetCustomerByEmailAsync(orderCreateDto.CustomerEmail);
         var boxes = (await boxService.GetBoxesForOderAsync(orderCreateDto.Boxes)).ToList();
         var totalPrice = boxes.Sum(b => b.Price * orderCreateDto.Boxes[b.Id]);
@@ -67,10 +67,10 @@ public class OrderService(
     public async Task<Order> UpdateStatusAsync(Guid orderId, ShippingStatus newStatus)
     {
         var order = await GetOrderByIdAsync(orderId);
-        
+
         order.ShippingStatus = newStatus;
         order.UpdatedAt = DateTime.UtcNow;
-        
+
         return await orderRepository.UpdateOrderAsync(order);
     }
 
@@ -79,7 +79,7 @@ public class OrderService(
         var order = await GetOrderByIdAsync(orderId);
         await orderRepository.DeleteOrderAsync(order);
     }
-    
+
     private async Task<Order> GetOrderByIdAsync(Guid orderId)
     {
         var order = await orderRepository.GetOrderByIdAsync(orderId);

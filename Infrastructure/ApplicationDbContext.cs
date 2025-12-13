@@ -8,10 +8,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Dimensions> Dimensions { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Box> Boxes { get; set; }
-    
+
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Address> Addresses { get; set; }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Box>()
@@ -27,18 +27,18 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder.Entity<Customer>(customer =>
         {
             customer.HasKey(c => c.Email);
-            
+
             customer.HasMany(c => c.Orders)
                 .WithOne(o => o.Customer)
                 .HasForeignKey("CustomerEmail")
                 .HasPrincipalKey(c => c.Email);
-            
+
             customer.HasOne(c => c.Address)
                 .WithOne()
                 .HasForeignKey<Customer>("AddressId")
                 .OnDelete(DeleteBehavior.Cascade);
         });
-        
+
         base.OnModelCreating(modelBuilder);
     }
 }

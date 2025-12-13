@@ -46,7 +46,7 @@ public class MappingProfile : Profile
     private static string GetRandomSimpsonImage()
     {
         Random random = new();
-        var simpsons = new List<string>()
+        var simpsons = new List<string>
         {
             "/assets/img/Abe.png",
             "/assets/img/Burns.png",

@@ -19,7 +19,7 @@ public class DbInitialize(IOrderService orderService, IBoxService boxService, IC
             "pink", "gold", "silver", "bronze", "copper"
         };
         Console.WriteLine("Creating boxes...");
-        for (int i = 0; i < numberOfBoxes; i++)
+        for (var i = 0; i < numberOfBoxes; i++)
         {
             var randomMaterial = materials[rnd.Next(materials.Count)];
             var randomColor = colors[rnd.Next(colors.Count)];
@@ -30,7 +30,7 @@ public class DbInitialize(IOrderService orderService, IBoxService boxService, IC
                 Material = randomMaterial,
                 Price = rnd.NextSingle() * 100,
                 Stock = rnd.Next(100, 10000),
-                DimensionsDto = new DimensionsDto()
+                DimensionsDto = new DimensionsDto
                 {
                     Height = rnd.Next(1, 100),
                     Length = rnd.Next(1, 100),
@@ -40,12 +40,12 @@ public class DbInitialize(IOrderService orderService, IBoxService boxService, IC
             });
         }
 
-        var boxParameter = new BoxParameters()
+        var boxParameter = new BoxParameters
         {
             BoxesPerPage = 2000,
             CurrentPage = 1,
             SearchTerm = "",
-            Descending = false,
+            Descending = false
         };
         var boxes = (await boxService.SearchBoxesAsync(boxParameter)).Boxes.ToList();
 
@@ -70,16 +70,16 @@ public class DbInitialize(IOrderService orderService, IBoxService boxService, IC
         var date = DateTime.Now;
         Console.WriteLine("Creating orders...");
         var currentMonth = date.Month;
-        for (int i = 0; i < currentMonth; i++)
+        for (var i = 0; i < currentMonth; i++)
         {
             Console.WriteLine($"{i / currentMonth * 100}%");
             date = date.AddMonths(-1);
             var numberOfOrders = rnd.Next(5, 15);
-            for (int j = 0; j < numberOfOrders; j++)
+            for (var j = 0; j < numberOfOrders; j++)
             {
                 var numberOfBoxesInOrder = rnd.Next(1, 3);
                 var saveBoxes = new Dictionary<Guid, int>();
-                for (int k = 0; k < numberOfBoxesInOrder; k++)
+                for (var k = 0; k < numberOfBoxesInOrder; k++)
                 {
                     var selectBox = boxes[rnd.Next(boxes.Count)].Id;
                     saveBoxes.TryAdd(selectBox, rnd.Next(1, 10));
@@ -87,14 +87,14 @@ public class DbInitialize(IOrderService orderService, IBoxService boxService, IC
 
                 try
                 {
-                    var createCustomerDto = new CreateCustomerDto()
+                    var createCustomerDto = new CreateCustomerDto
                     {
                         FirstName = firstNames[rnd.Next(firstNames.Count)],
                         LastName = lastNames[rnd.Next(lastNames.Count)],
                         Email =
                             $"{firstNames[rnd.Next(firstNames.Count)]}.{lastNames[rnd.Next(lastNames.Count)]}@gmail.com",
                         PhoneNumber = string.Join("", Enumerable.Range(0, 10).Select(n => rnd.Next(10).ToString())),
-                        CreateAddressDto = new CreateAddressDto()
+                        CreateAddressDto = new CreateAddressDto
                         {
                             City = cities[rnd.Next(cities.Count)],
                             Country = countries[rnd.Next(countries.Count)],
@@ -106,8 +106,8 @@ public class DbInitialize(IOrderService orderService, IBoxService boxService, IC
                     };
 
                     await customerService.CreateCustomerAsync(createCustomerDto);
-                    
-                    var createOrder = new OrderCreateDto()
+
+                    var createOrder = new OrderCreateDto
                     {
                         Boxes = saveBoxes,
                         CustomerEmail = createCustomerDto.Email

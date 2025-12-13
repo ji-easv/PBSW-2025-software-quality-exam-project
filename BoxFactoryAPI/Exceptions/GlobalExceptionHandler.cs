@@ -15,7 +15,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
         logger.LogError(exception, "An unhandled exception occurred during request {TraceId}: {Message}",
             httpContext.TraceIdentifier,
             exception.Message);
-        
+
         var statusCode = HttpStatusCode.InternalServerError;
         var title = "An unexpected error occurred.";
         var detail = "We're sorry, an error occurred. Please try again later or contact support.";
@@ -36,21 +36,22 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
         }
 
         httpContext.Response.StatusCode = (int)statusCode;
-        httpContext.Response.ContentType = "application/problem+json"; 
+        httpContext.Response.ContentType = "application/problem+json";
 
         var problemDetails = new ProblemDetails
         {
             Status = (int)statusCode,
             Title = title,
-            Detail = detail, 
+            Detail = detail,
             Instance = httpContext.Request.Path,
             // Include a TraceId for client-side correlation with server logs
-            Extensions = {
+            Extensions =
+            {
                 { "traceId", httpContext.TraceIdentifier }
             }
         };
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
-        return true; 
+        return true;
     }
 }

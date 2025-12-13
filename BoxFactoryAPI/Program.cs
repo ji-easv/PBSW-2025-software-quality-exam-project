@@ -13,7 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("BoxFactoryDatabase") ?? throw new InvalidOperationException("Connection string 'BoxFactoryDatabase' not found.");;
+    var connectionString = builder.Configuration.GetConnectionString("BoxFactoryDatabase") ??
+                           throw new InvalidOperationException("Connection string 'BoxFactoryDatabase' not found.");
+    ;
     options.UseNpgsql(connectionString);
 });
 
@@ -34,7 +36,7 @@ builder.Services.AddScoped<DbInitialize>();
 
 builder.Services.AddControllers();
 
-builder.Services.AddControllers().AddJsonOptions(options => 
+builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -58,7 +60,7 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
-    
+
     if (args.Contains("db-init") || args.Contains("--db-init"))
     {
         var dbInitializer = scope.ServiceProvider.GetRequiredService<DbInitialize>();

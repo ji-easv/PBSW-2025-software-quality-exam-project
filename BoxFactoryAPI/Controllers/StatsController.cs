@@ -8,7 +8,7 @@ namespace BoxFactoryAPI.Controllers;
 public class StatsController(IStatsService statsService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<Dictionary<int,int>>> Get()
+    public async Task<ActionResult<Dictionary<int, int>>> Get()
     {
         return Ok(await statsService.GetAggregatedMonthlyStatsAsync());
     }
