@@ -12,8 +12,10 @@ public class CustomerRepository(ApplicationDbContext dbContext) : ICustomerRepos
             .FirstOrDefaultAsync(c => c.Email.ToLower() == email.ToLower());
     }
 
-    public Task<Customer> CreateCustomerAsync(Customer customer)
+    public async Task<Customer> CreateCustomerAsync(Customer customer)
     {
-        throw new NotImplementedException();
+        dbContext.Customers.Add(customer);
+        await dbContext.SaveChangesAsync();
+        return customer;
     }
 }

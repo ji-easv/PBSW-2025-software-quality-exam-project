@@ -41,6 +41,23 @@ public class MappingProfile : Profile
         CreateMap<CreateCustomerDto, Customer>()
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.CreateAddressDto))
             .ForMember(dest => dest.SimpsonImgUrl, opt => opt.MapFrom(_ => GetRandomSimpsonImage()));
+        
+        CreateMap<OrderCreateDto, Order>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.ShippingStatus, opt => opt.MapFrom(_ => ShippingStatus.Received))
+            .ForMember(dest => dest.TotalBoxes,
+                opt => opt.MapFrom(src => src.Boxes.Values.Sum()))
+            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Boxes.Values.Sum()))
+            .ForMember(dest => dest.Boxes, opt => opt.Ignore())
+            .ForMember(dest => dest.Customer, opt => opt.Ignore())
+            .AfterMap((src, dest, ctx) =>
+            {
+                dest.Boxes = (List<Box>)ctx.Items["Boxes"];
+                dest.Customer = (Customer)ctx.Items["Customer"];
+                dest.TotalPrice = ((List<Box>)ctx.Items["Boxes"]).Sum(b => b.Price * src.Boxes[b.Id]);
+            });
     }
 
     private static string GetRandomSimpsonImage()

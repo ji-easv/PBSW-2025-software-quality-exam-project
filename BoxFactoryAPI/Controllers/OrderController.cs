@@ -36,11 +36,11 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpGet("orders-count")]
     public async Task<ActionResult<int>> GetTotalOrders()
     {
-        return Ok(await orderService.GetTotalBoxesSoldAsync());
+        return Ok(await orderService.GetTotalOrdersAsync());
     }
 
     [HttpGet("revenue")]
-    public async Task<ActionResult<decimal>> GetTotalRevenue()
+    public async Task<ActionResult<float>> GetTotalRevenue()
     {
         return Ok(await orderService.GetTotalRevenueAsync());
     }

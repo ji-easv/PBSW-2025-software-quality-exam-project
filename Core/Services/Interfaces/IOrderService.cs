@@ -10,7 +10,7 @@ public interface IOrderService
     public Task<IEnumerable<Order>> GetByStatusAsync(ShippingStatus status);
     public Task<IEnumerable<Order>> GetLatestAsync();
     public Task<int> GetTotalOrdersAsync();
-    public Task<decimal> GetTotalRevenueAsync();
+    public Task<float> GetTotalRevenueAsync();
     public Task<int> GetTotalBoxesSoldAsync();
     public Task<Order> UpdateStatusAsync(Guid orderId, ShippingStatus newStatus);
     public Task DeleteAsync(Guid orderId);

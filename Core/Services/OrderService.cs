@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using Core.Services.Interfaces;
 using Infrastructure.Interfaces;
 using Models.DTOs;
@@ -10,7 +11,9 @@ namespace Core.Services;
 public class OrderService(
     IOrderRepository orderRepository,
     ICustomerService customerService,
-    IBoxService boxService) : IOrderService
+    IBoxService boxService,
+    IMapper mapper
+) : IOrderService
 {
     public async Task<Order> CreateAsync(OrderCreateDto orderCreateDto)
     {
@@ -18,19 +21,13 @@ public class OrderService(
 
         var customer = await customerService.GetCustomerByEmailAsync(orderCreateDto.CustomerEmail);
         var boxes = (await boxService.GetBoxesForOderAsync(orderCreateDto.Boxes)).ToList();
-        var totalPrice = boxes.Sum(b => b.Price * orderCreateDto.Boxes[b.Id]);
 
-        var order = new Order
+        var order = mapper.Map<Order>(orderCreateDto, opt =>
         {
-            Id = Guid.NewGuid(),
-            Customer = customer,
-            Boxes = boxes,
-            TotalPrice = totalPrice,
-            ShippingStatus = ShippingStatus.Received,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            TotalBoxes = orderCreateDto.Boxes.Values.Sum()
-        };
+            opt.Items["Boxes"] = boxes;
+            opt.Items["Customer"] = customer;
+        });
+
         return await orderRepository.CreateOrderAsync(order);
     }
 
@@ -49,19 +46,19 @@ public class OrderService(
         return await orderRepository.GetLatestAsync();
     }
 
-    public Task<int> GetTotalOrdersAsync()
+    public async Task<int> GetTotalOrdersAsync()
     {
-        throw new NotImplementedException();
+        return await orderRepository.GetTotalOrdersAsync();
     }
 
-    public Task<decimal> GetTotalRevenueAsync()
+    public async Task<float> GetTotalRevenueAsync()
     {
-        throw new NotImplementedException();
+        return await orderRepository.GetTotalRevenueAsync();
     }
 
-    public Task<int> GetTotalBoxesSoldAsync()
+    public async Task<int> GetTotalBoxesSoldAsync()
     {
-        throw new NotImplementedException();
+        return await orderRepository.GetTotalBoxesSoldAsync();
     }
 
     public async Task<Order> UpdateStatusAsync(Guid orderId, ShippingStatus newStatus)

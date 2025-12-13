@@ -11,4 +11,8 @@ public interface IOrderRepository
     Task<IEnumerable<Order>> GetLatestAsync(int take = 10);
     Task<Order> UpdateOrderAsync(Order order);
     Task DeleteOrderAsync(Order order);
+    
+    Task<int> GetTotalOrdersAsync();
+    Task<float> GetTotalRevenueAsync();
+    Task<int> GetTotalBoxesSoldAsync();
 }

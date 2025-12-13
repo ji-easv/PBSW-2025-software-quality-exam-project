@@ -45,4 +45,19 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
         dbContext.Orders.Remove(order);
         return dbContext.SaveChangesAsync();
     }
+
+    public async Task<int> GetTotalOrdersAsync()
+    {
+        return await dbContext.Orders.CountAsync();
+    }
+
+    public async Task<float> GetTotalRevenueAsync()
+    {
+        return await dbContext.Orders.SumAsync(o => o.TotalPrice);
+    }
+
+    public async Task<int> GetTotalBoxesSoldAsync()
+    {
+        return await dbContext.Orders.SumAsync(o => o.TotalBoxes);
+    }
 }

@@ -9,7 +9,7 @@ public class CreateAddressDto
 
     [Required] [PositiveNumber] public int HouseNumber { get; set; }
 
-    public string HouseNumberAddition { get; set; } = string.Empty;
+    public string? HouseNumberAddition { get; set; }
 
     [Required] [MinLength(1)] public string City { get; set; } = null!;
 
