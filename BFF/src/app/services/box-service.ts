@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {firstValueFrom, Observable} from 'rxjs';
-import {Box, BoxCreateDto, BoxUpdateDto, PaginatedBoxList} from "../interfaces/box-inteface";
+import { Injectable } from '@angular/core';
+import { firstValueFrom, Observable } from 'rxjs';
+import { Box, BoxCreateDto, BoxUpdateDto, PaginatedBoxList } from "../interfaces/box-inteface";
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +11,22 @@ export class BoxService {
   pageSize: string = "10";
   public pageCount?: number;
 
-  private apiUrl = 'http://localhost:5133/box';
+  private readonly apiUrl = 'http://localhost:5133/box';
 
-  constructor(private http: HttpClient) {
-    this.get(1,this.pageSize);
+  constructor(private readonly http: HttpClient) {
+    this.initializeData();
   }
 
-  async get(currentPage:number, count?: string | "10",  searchTerm?: string) {
-    const call = this.http.get<PaginatedBoxList>(`${this.apiUrl}?currentPage=${currentPage}&boxesPerPage=${count}&searchTerm=${searchTerm ?? ''}`);
+  private initializeData(): void {
+    // Fire-and-forget: start the async operation without awaiting
+    this.get(1, this.pageSize).catch(error => {
+      console.error('Failed to preload boxes:', error);
+    });
+  }
+
+  async get(currentPage: number, count?: string, searchTerm?: string) {
+    const url = `${this.apiUrl}?currentPage=${currentPage}&boxesPerPage=${count}&searchTerm=${searchTerm ?? ''}`;
+    const call = this.http.get<PaginatedBoxList>(url);
     let result = await firstValueFrom(call);
     this.boxes = result.boxes;
     this.pageCount = result.pageCount;
@@ -37,7 +45,7 @@ export class BoxService {
     return firstValueFrom(this.http.put<Box>(`${this.apiUrl}/${id}`, boxUpdateDto));
   }
 
-  public delete(id: string) : Observable<any> {
+  public delete(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/box/${id}`);
   }
 

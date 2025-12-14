@@ -1,33 +1,36 @@
-import {Component, OnInit} from '@angular/core';
-import {BoxService} from "../../services/box-service";
-import {BoxUpdateDto, PaginatedBoxList} from "../../interfaces/box-inteface";
+import { Component, EventEmitter, Output } from '@angular/core';
+import { BoxUpdateDto } from "../../interfaces/box-inteface";
+import { BoxService } from "../../services/box-service";
 
 @Component({
   selector: 'app-box-list',
   templateUrl: './list.component.html',
 })
-export class ListComponent implements OnInit {
+export class ListComponent {
+  @Output() editBox = new EventEmitter<string>();
 
   currentPage: number = 0;
   // @ts-ignore
   buttons: any[];
 
   constructor(public boxService: BoxService) {
+    this.loadBoxes();
   }
 
-  async ngOnInit() {
-    let result = await this.boxService.get(this.currentPage+1,"10", "");
-    this.buttons = Array(result.pageCount).fill(null);
-    console.log(result.pageCount);
+  private loadBoxes() {
+    this.boxService.get(this.currentPage + 1, "10", "").then(result => {
+      this.buttons = new Array(result.pageCount).fill(null);
+    })
+      .catch(err => {
+        console.log(err);
+      });
   }
+
   async getNextPage(page: number) {
     this.currentPage = page;
     try {
-      let result = await this.boxService.get(this.currentPage + 1,"10", "");
-      console.log(result);
-      // Update your component state based on the result here
+      await this.boxService.get(this.currentPage + 1, "10", "");
     } catch (err) {
-      // Handle errors here.
       console.log(err);
     }
   }
@@ -41,9 +44,13 @@ export class ListComponent implements OnInit {
     }
   }
 
+  onEditBox(boxId: string) {
+    this.editBox.emit(boxId);
+  }
+
   async updateBox(boxId: string, boxUpdateDto: BoxUpdateDto) {
     try {
-      this.boxService.update(boxId, boxUpdateDto);
+      await this.boxService.update(boxId, boxUpdateDto);
     } catch (error) {
       console.error(error);
     }

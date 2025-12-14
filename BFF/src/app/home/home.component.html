@@ -1,6 +1,6 @@
 <div class="flex gap-3 mb-3 h-auto mx-3">
   <div class="card w-96 bg-base-100 shadow">
-    <figure><img src="assets/img/gdyd7htj.png" alt="Shoes"/></figure>
+    <figure><img src="assets/img/gdyd7htj.png" alt="Shoes" /></figure>
     <div class="card-body">
       <h2 class="card-title">Box factory!
         <div class="badge badge-secondary">NEW</div>
@@ -13,50 +13,50 @@
     <table class="table">
       <!-- head -->
       <thead>
-      <tr>
-        <th>ID</th>
-        <th>Customer</th>
-        <th>Boxes</th>
-        <th>Price</th>
-      </tr>
+        <tr>
+          <th scope="col">Order ID</th>
+          <th scope="col">Customer</th>
+          <th scope="col">Boxes</th>
+          <th scope="col">Price</th>
+        </tr>
       </thead>
       <tbody>
-      <ng-template ngFor let-order [ngForOf]="latestOrders">
-        <tr>
-          <td>
-            <div class="flex items-center space-x-3">
-              <div class="avatar">
-                <div class="mask mask-squircle w-12 h-12">
-                  <img src="{{order.customer?.simpsonImgUrl}}" alt="Avatar Tailwind CSS Component"/>
+        <ng-template ngFor let-order [ngForOf]="latestOrders">
+          <tr>
+            <td>
+              <div class="flex items-center space-x-3">
+                <div class="avatar">
+                  <div class="mask mask-squircle w-12 h-12">
+                    <img src="{{order.customer?.simpsonImgUrl}}" alt="Avatar Tailwind CSS Component" />
+                  </div>
+                </div>
+                <div>
+                  <div class="font-bold">{{order.id}}</div>
+                  <div class="text-sm opacity-50">{{order.shippingStatus}}</div>
                 </div>
               </div>
-              <div>
-                <div class="font-bold">{{order.id}}</div>
-                <div class="text-sm opacity-50">{{order.shippingStatus}}</div>
-              </div>
-            </div>
-          </td>
-          <td>
-            {{order.customer?.email}}
-            <br/>
-            <span class="badge badge-ghost badge-sm">{{order.customer?.address?.city}}
-              , {{order.customer?.address?.country}}</span>
-          </td>
-          <td>
-            {{order.totalBoxes}} boxes
-          </td>
-          <td>{{order.totalPrice | number:'1.2-2'}}€</td>
-        </tr>
-      </ng-template>
+            </td>
+            <td>
+              {{order.customer?.email}}
+              <br />
+              <span class="badge badge-ghost badge-sm">{{order.customer?.address?.city}}
+                , {{order.customer?.address?.country}}</span>
+            </td>
+            <td>
+              {{order.totalBoxes}} boxes
+            </td>
+            <td>{{order.totalPrice | number:'1.2-2'}}€</td>
+          </tr>
+        </ng-template>
       </tbody>
       <!-- foot -->
       <tfoot>
-      <tr>
-        <th>Order ID</th>
-        <th>Customer</th>
-        <th>Boxes</th>
-        <th>Price</th>
-      </tr>
+        <tr>
+          <th scope="col">Order ID</th>
+          <th scope="col">Customer</th>
+          <th scope="col">Boxes</th>
+          <th scope="col">Price</th>
+        </tr>
       </tfoot>
 
     </table>
@@ -66,12 +66,8 @@
 <div class="flex gap-3 mx-3">
   <div class="card flex-grow bg-base-100 shadow">
     <div style="text-align:center">
-      <apx-chart
-        [series]="chartOptions.series!"
-        [chart]="chartOptions.chart!"
-        [xaxis]="chartOptions.xaxis!"
-        [yaxis]="chartOptions.yaxis!"
-      ></apx-chart>
+      <apx-chart [series]="chartOptions.series!" [chart]="chartOptions.chart!" [xaxis]="chartOptions.xaxis!"
+        [yaxis]="chartOptions.yaxis!"></apx-chart>
     </div>
   </div>
 
@@ -93,6 +89,3 @@
     </div>
   </div>
 </div>
-
-
-
