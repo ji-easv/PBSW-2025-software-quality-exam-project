@@ -15,22 +15,33 @@ public class OrderRepository(ApplicationDbContext dbContext) : IOrderRepository
 
     public async Task<Order?> GetOrderByIdAsync(Guid orderId)
     {
-        return await dbContext.Orders.FindAsync(orderId);
+        return await dbContext.Orders
+            .Include(o => o.Customer)
+            .FirstOrDefaultAsync(o => o.Id == orderId);
     }
 
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
     {
-        return await dbContext.Orders.ToListAsync();
+        return await dbContext.Orders
+            .Include(o => o.Customer)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Order>> GetByStatusAsync(ShippingStatus status)
     {
-        return await dbContext.Orders.Where(o => o.ShippingStatus == status).ToListAsync();
+        return await dbContext.Orders
+            .Include(o => o.Customer)
+            .Where(o => o.ShippingStatus == status)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<Order>> GetLatestAsync(int take = 10)
     {
-        return await dbContext.Orders.OrderByDescending(o => o.CreatedAt).Take(take).ToListAsync();
+        return await dbContext.Orders
+            .Include(o => o.Customer)
+            .OrderByDescending(o => o.CreatedAt)
+            .Take(take)
+            .ToListAsync();
     }
 
     public async Task<Order> UpdateOrderAsync(Order order)

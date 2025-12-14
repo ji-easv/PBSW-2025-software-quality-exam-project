@@ -20,18 +20,20 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasForeignKey<Box>("DimensionsId")
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Order>()
-            .HasMany(o => o.Boxes)
-            .WithMany();
+        modelBuilder.Entity<Order>(order =>
+        {
+            order.HasMany(o => o.Boxes)
+                .WithMany();
+            
+            order.HasOne(o => o.Customer)
+                .WithMany()
+                .HasForeignKey("CustomerEmail")
+                .HasPrincipalKey(c => c.Email);
+        });
 
         modelBuilder.Entity<Customer>(customer =>
         {
             customer.HasKey(c => c.Email);
-
-            customer.HasMany(c => c.Orders)
-                .WithOne(o => o.Customer)
-                .HasForeignKey("CustomerEmail")
-                .HasPrincipalKey(c => c.Email);
 
             customer.HasOne(c => c.Address)
                 .WithOne()

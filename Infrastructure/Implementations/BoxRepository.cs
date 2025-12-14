@@ -11,13 +11,16 @@ public class BoxRepository(ApplicationDbContext applicationDbContext) : IBoxRepo
     public async Task<IEnumerable<Box>> GetBoxesByIdsAsync(IEnumerable<Guid> boxIds)
     {
         return await applicationDbContext.Boxes
+            .Include(b => b.Dimensions)
             .Where(box => boxIds.Contains(box.Id))
             .ToListAsync();
     }
 
     public async Task<Box?> GetBoxByIdAsync(Guid boxId)
     {
-        return await applicationDbContext.Boxes.FindAsync(boxId);
+        return await applicationDbContext.Boxes
+            .Include(b => b.Dimensions)
+            .FirstOrDefaultAsync(b => b.Id == boxId);
     }
 
     public async Task<Box> CreateBoxAsync(Box box)
@@ -42,7 +45,7 @@ public class BoxRepository(ApplicationDbContext applicationDbContext) : IBoxRepo
 
     public async Task<SearchBoxResult> SearchBoxesAsync(BoxParameters boxParameters)
     {
-        var searchQuery = applicationDbContext.Boxes.AsQueryable();
+        var searchQuery = applicationDbContext.Boxes.Include(b => b.Dimensions).AsQueryable();
         searchQuery = ApplySearchFilters(searchQuery, boxParameters);
         searchQuery = ApplySorting(searchQuery, boxParameters);
 
@@ -53,7 +56,8 @@ public class BoxRepository(ApplicationDbContext applicationDbContext) : IBoxRepo
 
         var totalBoxes = await applicationDbContext.Boxes.CountAsync();
         var totalPages = (int)Math.Ceiling(totalBoxes / (double)boxParameters.BoxesPerPage);
-        var boxes = await searchQuery.ToListAsync();
+        var boxes = await searchQuery
+            .ToListAsync();
         return new SearchBoxResult
         {
             Boxes = boxes,

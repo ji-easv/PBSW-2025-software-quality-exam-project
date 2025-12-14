@@ -14,7 +14,5 @@ public class Customer
 
     public string? SimpsonImgUrl { get; set; }
 
-    public List<Order> Orders { get; set; } = [];
-
     [Phone] public string? PhoneNumber { get; set; }
 }
