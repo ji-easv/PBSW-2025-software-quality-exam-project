@@ -1,4 +1,4 @@
-import {Dimensions, DimensionsDto} from "./dimension-interface";
+import { Dimensions, DimensionsDto } from "./dimension-interface";
 
 
 export interface PaginatedBoxList {
@@ -19,18 +19,18 @@ export interface Box {
 
 export interface BoxCreateDto {
   weight: number;
-  colour?: string;
-  material?: string;
-  dimensionsDto?: DimensionsDto; // Assuming Dimensions is another interface we defined in TypeScript
-  stock: number; // int in C# = number in TypeScript
-  price: number; // float in C# = number in TypeScript
+  colour?: string | null;
+  material?: string | null;
+  dimensionsDto?: DimensionsDto | null; // Assuming Dimensions is another interface we defined in TypeScript
+  stock: number;
+  price: number;
 }
 
 export interface BoxUpdateDto {
   weight: number;
-  colour?: string;
-  material?: string;
-  dimensionsDto?: DimensionsDto; // Assuming Dimensions is another interface defined
+  colour?: string | null;
+  material?: string | null;
+  dimensionsDto?: DimensionsDto | null; // Assuming Dimensions is another interface defined
   stock: number; // int in C# = number in TypeScript
   price: number; // float in C# = number in TypeScript
 }

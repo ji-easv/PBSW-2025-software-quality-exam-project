@@ -59,69 +59,43 @@ export class ModifyBoxComponent {
         this.boxForm.controls.stock.setValue(box.stock);
     }
 
-    async onUpdateBox(event: Event) {
-        if (this.boxForm.valid && this.boxId) {
-            try {
-                const updatedBox = await this.boxService.update(this.boxId, {
-                    weight: this.boxForm.controls.weight.value!,
-                    colour: this.boxForm.controls.colour.value || "",
-                    material: this.boxForm.controls.material.value || "",
-                    dimensionsDto: {
-                        height: this.boxForm.controls.height.value!,
-                        width: this.boxForm.controls.width.value!,
-                        length: this.boxForm.controls.length.value!
-                    },
-                    price: this.boxForm.controls.price.value!,
-                    stock: this.boxForm.controls.stock.value!
-                });
-                const index = this.boxService.boxes.findIndex(
-                    (box) => box.id === updatedBox.id
-                );
-                if (index !== -1) {
-                    this.boxService.boxes.splice(index, 1, updatedBox);
-                }
-                this.boxForm.reset();
-                this.closeDialog();
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            console.error("Invalid form");
-        }
-    }
-
-    async onCreateBox(event: Event) {
-        if (this.boxForm.valid) {
-            try {
-                const createdBox = await this.boxService.create({
-                    weight: this.boxForm.controls.weight.value!,
-                    colour: this.boxForm.controls.colour.value || "",
-                    material: this.boxForm.controls.material.value || "",
-                    dimensionsDto: {
-                        height: this.boxForm.controls.height.value!,
-                        width: this.boxForm.controls.width.value!,
-                        length: this.boxForm.controls.length.value!
-                    },
-                    price: this.boxForm.controls.price.value!,
-                    stock: this.boxForm.controls.stock.value!
-                });
-
-                this.boxService.boxes.push(createdBox);
-                this.boxForm.reset();
-                this.closeDialog();
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            console.error("Invalid form");
-        }
-    }
-
     async onSubmit(event: Event) {
-        if (this.boxId) {
-            await this.onUpdateBox(event);
-        } else {
-            await this.onCreateBox(event);
+        if (this.boxForm.invalid) {
+            console.error("Invalid form");
+            return;
         }
+
+        let dimensionsValid = this.boxForm.controls.height.value! > 0 &&
+            this.boxForm.controls.width.value! > 0 &&
+            this.boxForm.controls.length.value! > 0;
+
+        const boxData = {
+            weight: this.boxForm.controls.weight.value!,
+            colour: this.boxForm.controls.colour.value,
+            material: this.boxForm.controls.material.value,
+            dimensionsDto: dimensionsValid ? {
+                height: this.boxForm.controls.height.value!,
+                width: this.boxForm.controls.width.value!,
+                length: this.boxForm.controls.length.value!
+            } : null,
+            price: this.boxForm.controls.price.value!,
+            stock: this.boxForm.controls.stock.value!
+        };
+
+        if (this.boxId) {
+            const updatedBox = await this.boxService.update(this.boxId, boxData);
+            const index = this.boxService.boxes.findIndex(
+                (box) => box.id === updatedBox.id
+            );
+            if (index !== -1) {
+                this.boxService.boxes.splice(index, 1, updatedBox);
+            }
+        } else {
+            const createdBox = await this.boxService.create(boxData);
+            this.boxService.boxes.push(createdBox);
+        }
+
+        this.boxForm.reset();
+        this.closeDialog();
     }
 }
