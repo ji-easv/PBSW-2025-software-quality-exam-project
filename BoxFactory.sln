@@ -11,6 +11,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D1F2798D-5893-46A9-AF52-1E62589772B6}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{59A9BA47-9759-477B-9E83-140F1801504A}"
