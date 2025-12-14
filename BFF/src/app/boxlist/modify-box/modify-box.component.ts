@@ -50,8 +50,8 @@ export class ModifyBoxComponent {
 
         let box = await this.boxService.getbyId(this.boxId);
         this.boxForm.controls.weight.setValue(box.weight);
-        this.boxForm.controls.colour.setValue(box.colour!);
-        this.boxForm.controls.material.setValue(box.material!);
+        this.boxForm.controls.colour.setValue(box.colour ?? '');
+        this.boxForm.controls.material.setValue(box.material ?? '');
         this.boxForm.controls.height.setValue(box.dimensions?.height || 0);
         this.boxForm.controls.width.setValue(box.dimensions?.width || 0);
         this.boxForm.controls.length.setValue(box.dimensions?.length || 0);
