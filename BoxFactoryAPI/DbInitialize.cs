@@ -129,7 +129,7 @@ public class DbInitialize(
 
             await boxService.CreateBoxAsync(new BoxCreateDto
             {
-                Colour = randomColor,
+                Color = randomColor,
                 Material = randomMaterial,
                 Price = _rnd.NextSingle() * 100,
                 Stock = _rnd.Next(100, 10000),

@@ -52,7 +52,7 @@ export class BoxService {
     return this.http.delete(`${this.apiUrl}/box/${id}`);
   }
 
-  public getColours(): string[] {
+  public getColors(): string[] {
     return ['red', 'blue', 'green', 'yellow', 'black', 'white', 'brown', 'grey', 'orange', 'purple', 'pink', 'gold', 'silver', 'bronze', 'copper'];
   }
 

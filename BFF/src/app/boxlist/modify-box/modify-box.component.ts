@@ -17,7 +17,7 @@ export class ModifyBoxComponent {
         height: new FormControl(0, [Validators.required, positiveNumberValidator]),
         price: new FormControl(0, [Validators.required, positiveNumberValidator]),
         stock: new FormControl(0, [Validators.required, Validators.min(0)]),
-        colour: new FormControl(''),
+        color: new FormControl(''),
         material: new FormControl(''),
     });
 
@@ -50,7 +50,7 @@ export class ModifyBoxComponent {
 
         let box = await this.boxService.getbyId(this.boxId);
         this.boxForm.controls.weight.setValue(box.weight);
-        this.boxForm.controls.colour.setValue(box.colour ?? '');
+        this.boxForm.controls.color.setValue(box.color ?? '');
         this.boxForm.controls.material.setValue(box.material ?? '');
         this.boxForm.controls.height.setValue(box.dimensions?.height || 0);
         this.boxForm.controls.width.setValue(box.dimensions?.width || 0);
@@ -71,7 +71,7 @@ export class ModifyBoxComponent {
 
         const boxData = {
             weight: this.boxForm.controls.weight.value!,
-            colour: this.boxForm.controls.colour.value,
+            color: this.boxForm.controls.color.value,
             material: this.boxForm.controls.material.value,
             dimensionsDto: dimensionsValid ? {
                 height: this.boxForm.controls.height.value!,
