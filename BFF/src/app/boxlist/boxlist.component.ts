@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {BoxService} from "../services/box-service";
+import { Component } from '@angular/core';
+import { BoxService } from "../services/box-service";
 
 @Component({
   selector: 'app-box',
@@ -7,7 +7,7 @@ import {BoxService} from "../services/box-service";
 })
 export class BoxListComponent {
 
-  constructor(private boxService: BoxService) {
+  constructor(private readonly boxService: BoxService) {
   }
   onSearchClick(value: string) {
     this.boxService.get(1, value);

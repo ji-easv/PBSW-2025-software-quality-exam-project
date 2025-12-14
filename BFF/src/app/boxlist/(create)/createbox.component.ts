@@ -1,9 +1,9 @@
-import {Component, ElementRef, EventEmitter, Output, ViewChild} from '@angular/core';
-import {BoxService} from "../../services/box-service";
-import {BoxCreateDto} from "../../interfaces/box-inteface";
-import {Dimensions, DimensionsDto} from "../../interfaces/dimension-interface";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {positiveNumberValidator} from "../../positiveNumberValidator";
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { BoxCreateDto } from "../../interfaces/box-inteface";
+import { DimensionsDto } from "../../interfaces/dimension-interface";
+import { positiveNumberValidator } from "../../positiveNumberValidator";
+import { BoxService } from "../../services/box-service";
 
 @Component({
   selector: 'create-box',
@@ -24,8 +24,8 @@ export class CreateboxComponent {
   });
 
   constructor(public boxService: BoxService) {
-    this.dimensionsDto = {height: 0, width: 0, length: 0};
-    this.box = {weight: 0, colour: "", material: "", dimensionsDto: this.dimensionsDto, price: 0, stock: 0};
+    this.dimensionsDto = { height: 0, width: 0, length: 0 };
+    this.box = { weight: 0, colour: "", material: "", dimensionsDto: this.dimensionsDto, price: 0, stock: 0 };
   }
 
   async onCreateBox(event: Event) {

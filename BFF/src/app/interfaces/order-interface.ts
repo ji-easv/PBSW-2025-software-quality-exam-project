@@ -1,5 +1,4 @@
-import {Box} from "./box-inteface";
-import {CreateCustomerDto, Customer} from "./customer-interface";
+import { CreateCustomerDto, Customer } from "./customer-interface";
 
 export interface Order {
   id: string;

@@ -1,11 +1,11 @@
-import {Component} from '@angular/core';
-import {BoxService} from "../../services/box-service";
-import {OrderCreateDto} from "../../interfaces/order-interface";
-import {Box} from "../../interfaces/box-inteface";
-import {CreateCustomerDto} from "../../interfaces/customer-interface";
-import {CreateAddressDto} from "../../interfaces/address-interface";
-import {OrderService} from "../../services/order-service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { CreateAddressDto } from "../../interfaces/address-interface";
+import { Box } from "../../interfaces/box-inteface";
+import { CreateCustomerDto } from "../../interfaces/customer-interface";
+import { OrderCreateDto } from "../../interfaces/order-interface";
+import { BoxService } from "../../services/box-service";
+import { OrderService } from "../../services/order-service";
 
 @Component({
   selector: 'create-box',
@@ -40,7 +40,7 @@ export class CreateorderComponent {
     this.boxService.get(1).then(boxes => this.boxes = this.boxService.boxes);
     this.order = {
       boxes: {},
-      customer: { simpsonImgUrl:"" }
+      customer: { simpsonImgUrl: "" }
     };
     this.activeTab = "box-tab";
   }
@@ -53,8 +53,6 @@ export class CreateorderComponent {
     event.stopPropagation();
     this.addedBoxes[boxId] = Number(boxAmount);
     this.order.boxes = this.addedBoxes;
-    boxId = "";
-    boxAmount = "";
   }
 
   removeBox(boxId: string, event: Event): void {
@@ -73,6 +71,6 @@ export class CreateorderComponent {
     this.addedBoxes = {};
   }
 
-  protected readonly parseInt = parseInt;
+  protected readonly parseInt = Number.parseInt;
   protected readonly Object = Object;
 }

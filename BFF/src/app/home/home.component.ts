@@ -24,7 +24,11 @@ export class HomeComponent implements OnInit {
   ordersCount: number = 0;
   boxesSold: number = 0;
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
+    this.initializeComponent();
+  }
+
+  private async initializeComponent(): Promise<void> {
     await this.loadOrders();
     await this.loadStatistics();
     this.data = await this.fetchDataForChart();

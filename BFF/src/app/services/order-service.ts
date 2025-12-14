@@ -8,15 +8,22 @@ import { Order, OrderCreateDto, ShippingStatusDto } from "../interfaces/order-in
 })
 export class OrderService {
   orders: Order[] = [];
-  private apiUrl = 'http://localhost:5133/Order';
+  private readonly apiUrl = 'http://localhost:5133/Order';
   private ordersPromise: Promise<Order[]> | null = null;
 
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {
+    this.initializeData();
+  }
+
+  private initializeData(): void {
+    // Fire-and-forget: start the async operation without awaiting
+    this.get().catch(error => {
+      console.error('Failed to preload orders:', error);
+    });
+  }
 
   async get(): Promise<Order[]> {
-    if (this.ordersPromise === null) {
-      this.ordersPromise = this.fetchOrders();
-    }
+    this.ordersPromise ??= this.fetchOrders();
 
     this.orders = await this.ordersPromise;
     return this.orders;
@@ -25,22 +32,22 @@ export class OrderService {
   private async fetchOrders(): Promise<Order[]> {
     const call = this.http.get<Order[]>(`${this.apiUrl}`);
     const orders = await firstValueFrom<Order[]>(call);
-    orders.map(o => o.createdAt = new Date(o.createdAt));
-    orders.map(o => o.updatedAt = new Date(o.updatedAt ? o.updatedAt : o.createdAt));
+    orders.forEach(o => o.createdAt = new Date(o.createdAt));
+    orders.forEach(o => o.updatedAt = new Date(o.updatedAt ?? o.createdAt));
     return orders;
   }
 
   public async getbyId(id: string): Promise<Order> {
     const order = await firstValueFrom(this.http.get<Order>(`${this.apiUrl}/${id}`));
     order.createdAt = new Date(order.createdAt);
-    order.updatedAt = new Date(order.updatedAt ? order.updatedAt : order.createdAt);
+    order.updatedAt = new Date(order.updatedAt ?? order.createdAt);
     return order;
   }
 
   public async create(orderCreateDto: OrderCreateDto) {
     const order = await firstValueFrom(this.http.post<Order>(`${this.apiUrl}`, orderCreateDto));
     order.createdAt = new Date(order.createdAt);
-    order.updatedAt = new Date(order.updatedAt ? order.updatedAt : order.createdAt);
+    order.updatedAt = new Date(order.updatedAt ?? order.createdAt);
     return order;
   }
 
@@ -54,8 +61,8 @@ export class OrderService {
   public async getLatest(): Promise<Order[]> {
     const call = this.http.get<Order[]>(`${this.apiUrl}/latest`);
     const orders = await firstValueFrom(call);
-    orders.map(o => o.createdAt = new Date(o.createdAt));
-    orders.map(o => o.updatedAt = new Date(o.updatedAt ? o.updatedAt : o.createdAt));
+    orders.forEach(o => o.createdAt = new Date(o.createdAt));
+    orders.forEach(o => o.updatedAt = new Date(o.updatedAt ?? o.createdAt));
     return orders;
   }
 
@@ -76,6 +83,6 @@ export class OrderService {
 
   public async getOrdersCountByMonth(): Promise<Map<number, number>> {
     const call = this.http.get<{ [key: number]: number }>("http://localhost:5133/stats");
-    return new Map(Object.entries(await firstValueFrom(call)).map(([key, value]) => [parseInt(key), value]));
+    return new Map(Object.entries(await firstValueFrom(call)).map(([key, value]) => [Number.parseInt(key), value]));
   }
 }

@@ -5,7 +5,8 @@
         <div class="prose flex flex-row">
           <h2>
             <a [routerLink]="['/boxlist']" class="btn btn-active">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
               </svg>
             </a>
@@ -14,27 +15,29 @@
         </div>
 
         <div class="form-control w-full">
-          <label class="label">
+          <label class="label" for="weight">
             <span class="label-text">Weight:</span>
           </label>
-          <input type="number" placeholder="Enter weight" class="input input-bordered w-full"
-                 id="weight" name="weight" [formControl]="boxForm.controls.weight"/>
+          <input type="number" placeholder="Enter weight" class="input input-bordered w-full" id="weight" name="weight"
+            [formControl]="boxForm.controls.weight" />
         </div>
 
         <div class="form-control w-full">
-          <label class="label">
+          <label class="label" for="colour">
             <span class="label-text">Colour:</span>
           </label>
-          <select class="select select-bordered w-full" id="colour" name="colour" [formControl]="boxForm.controls.colour">
+          <select class="select select-bordered w-full" id="colour" name="colour"
+            [formControl]="boxForm.controls.colour">
             <option *ngFor="let colour of boxService.getColours()" [value]="colour">{{colour}}</option>
           </select>
         </div>
 
         <div class="form-control w-full">
-          <label class="label">
+          <label class="label" for="material">
             <span class="label-text">Material:</span>
           </label>
-          <select class="select select-bordered w-full" id="material" name="material" [formControl]="boxForm.controls.material">
+          <select class="select select-bordered w-full" id="material" name="material"
+            [formControl]="boxForm.controls.material">
             <option *ngFor="let material of boxService.getMaterials()" [value]="material">{{material}}</option>
           </select>
         </div>
@@ -44,27 +47,27 @@
         <div class="flex gap-3">
 
           <div class="form-control w-full">
-            <label class="label">
+            <label class="label" for="length">
               <span class="label-text">Length:</span>
             </label>
-            <input type="number" placeholder="Enter length" class="input input-bordered w-full"
-                   id="length" name="length" [formControl]="boxForm.controls.length"/>
+            <input type="number" placeholder="Enter length" class="input input-bordered w-full" id="length"
+              name="length" [formControl]="boxForm.controls.length" />
           </div>
 
           <div class="form-control w-full">
-            <label class="label">
+            <label class="label" for="width">
               <span class="label-text">Width:</span>
             </label>
-            <input type="number" placeholder="Enter width" class="input input-bordered w-full"
-                   id="width" name="width" [formControl]="boxForm.controls.width"/>
+            <input type="number" placeholder="Enter width" class="input input-bordered w-full" id="width" name="width"
+              [formControl]="boxForm.controls.width" />
           </div>
 
           <div class="form-control w-full">
-            <label class="label">
+            <label class="label" for="height">
               <span class="label-text">Height:</span>
             </label>
-            <input type="number" placeholder="Enter height" class="input input-bordered w-full"
-                   id="height" name="height" [formControl]="boxForm.controls.height"/>
+            <input type="number" placeholder="Enter height" class="input input-bordered w-full" id="height"
+              name="height" [formControl]="boxForm.controls.height" />
           </div>
 
         </div>
@@ -72,18 +75,18 @@
         <div class="divider">Price</div>
         <div class="flex gap-3 mb-3">
           <div class="form-control w-full">
-            <label class="label">
+            <label class="label" for="price">
               <span class="label-text">Price:</span>
             </label>
-            <input type="number" placeholder="Enter price" class="input input-bordered w-full"
-                   id="price" name="price" [formControl]="boxForm.controls.price"/>
+            <input type="number" placeholder="Enter price" class="input input-bordered w-full" id="price" name="price"
+              [formControl]="boxForm.controls.price" />
           </div>
           <div class="form-control w-full">
-            <label class="label">
+            <label class="label" for="stock">
               <span class="label-text">Stock:</span>
             </label>
-            <input type="number" placeholder="Enter stock" class="input input-bordered w-full"
-                   id="stock" name="stock" [formControl]="boxForm.controls.stock"/>
+            <input type="number" placeholder="Enter stock" class="input input-bordered w-full" id="stock" name="stock"
+              [formControl]="boxForm.controls.stock" />
           </div>
         </div>
 
