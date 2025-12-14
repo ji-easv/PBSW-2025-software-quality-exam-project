@@ -9,6 +9,9 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<BoxCreateDto, Box>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.Dimensions,
                 opt => opt
                     .MapFrom(src => new Dimensions
@@ -21,6 +24,9 @@ public class MappingProfile : Profile
             .ReverseMap();
 
         CreateMap<BoxUpdateDto, Box>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.Dimensions,
                 opt => opt
                     .MapFrom(src => new Dimensions
@@ -30,7 +36,11 @@ public class MappingProfile : Profile
                         Width = src.DimensionsDto.Width,
                         Height = src.DimensionsDto.Height
                     }))
-            .ReverseMap();
+            .AfterMap((src, dest, ctx) =>
+            {
+                dest.Id = (Guid)ctx.Items["Id"];
+                dest.CreatedAt = (DateTime)ctx.Items["CreatedAt"];
+            });
 
         CreateMap<Dimensions, DimensionsDto>();
 

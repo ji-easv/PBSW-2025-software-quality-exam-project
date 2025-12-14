@@ -2,3 +2,8 @@
 .vs/
 .idea
 .vs
+
+**/bin
+**/obj
+
+**/TestResults

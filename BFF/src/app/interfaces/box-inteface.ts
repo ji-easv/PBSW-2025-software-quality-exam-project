@@ -12,7 +12,7 @@ export interface SearchBoxResult {
 export interface Box {
   id: string; // Guids are represented as strings in Typescript
   weight: number; // float numbers are represented as number type in TypeScript
-  colour?: string; // string? is represented as Optional String in TypeScript
+  color?: string; // string? is represented as Optional String in TypeScript
   material?: string; // string? is represented as Optional String in TypeScript
   dimensions?: Dimensions; // Assuming Dimensions is another interface we defined in TypeScript
   createdAt: Date; // DateTime in C# = Date in TypeScript
@@ -22,7 +22,7 @@ export interface Box {
 
 export interface BoxCreateDto {
   weight: number;
-  colour?: string | null;
+  color?: string | null;
   material?: string | null;
   dimensionsDto?: DimensionsDto | null; // Assuming Dimensions is another interface we defined in TypeScript
   stock: number;
@@ -31,7 +31,7 @@ export interface BoxCreateDto {
 
 export interface BoxUpdateDto {
   weight: number;
-  colour?: string | null;
+  color?: string | null;
   material?: string | null;
   dimensionsDto?: DimensionsDto | null; // Assuming Dimensions is another interface defined
   stock: number; // int in C# = number in TypeScript

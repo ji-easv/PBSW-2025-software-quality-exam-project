@@ -21,12 +21,12 @@
                 </div>
 
                 <div class="form-control w-full">
-                    <label class="label" for="colour">
-                        <span class="label-text">Colour:</span>
+                    <label class="label" for="color">
+                        <span class="label-text">Color:</span>
                     </label>
-                    <select class="select select-bordered w-full" id="colour" name="colour"
-                        [formControl]="boxForm.controls.colour">
-                        <option *ngFor="let colour of boxService.getColours()" [value]="colour">{{colour}}</option>
+                    <select class="select select-bordered w-full" id="color" name="color"
+                        [formControl]="boxForm.controls.color">
+                        <option *ngFor="let color of boxService.getColors()" [value]="color">{{color}}</option>
                     </select>
                 </div>
 
