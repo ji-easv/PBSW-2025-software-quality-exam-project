@@ -20,4 +20,10 @@ jobs:
         dotnet-version: '10.0.x'
     
     - name: Run Unit Tests
-      run: dotnet test
+      run: dotnet test "Core.UnitTests/Core.UnitTests.csproj" --logger:trx
+      
+    - name: Run Cucumber tests
+      run: dotnet test "BoxFactory.BDDTests/BoxFactory.BDDTests.csproj" --logger:trx
+      
+    - name: Run Integration Tests
+      run: dotnet test "BoxFactory.IntegrationTests/BoxFactory.IntegrationTests.csproj" --logger:trx
