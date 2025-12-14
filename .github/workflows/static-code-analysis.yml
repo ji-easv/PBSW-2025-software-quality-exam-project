@@ -1,0 +1,35 @@
+name: Static Code Analysis
+on:
+    push:
+        branches:
+        - main
+    pull_request:
+        branches:
+        - main
+
+jobs:
+    static-code-analysis:
+        name: Static Code Analysis
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v6
+          with:
+            fetch-depth: 0 # Disabling shallow clones is recommended for improving the relevancy of reporting
+    
+        - name: Set up .NET
+          uses: actions/setup-dotnet@v5
+          with:
+            dotnet-version: '8.0.x'
+
+        - name: Install .NET Sonar Scanner
+          run: |
+            dotnet tool install --global dotnet-sonarscanner --version 8.0.3
+            echo "::add-path::${HOME}/.dotnet/tools"
+
+        - name: SonarQube Scan
+          run: |
+            dotnet sonarscanner begin /k:"${{ github.repository }}" /o:"${{ github.repository_owner }}" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+            dotnet build --no-incremental
+            dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
