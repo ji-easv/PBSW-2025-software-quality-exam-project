@@ -1,9 +1,12 @@
 import { Dimensions, DimensionsDto } from "./dimension-interface";
 
 
-export interface PaginatedBoxList {
+export interface SearchBoxResult {
   boxes: Box[];
-  pageCount: number;
+  currentPage: number;
+  totalPages: number;
+  boxesPerPage: number;
+  totalBoxes: number;
 }
 
 export interface Box {
