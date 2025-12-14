@@ -1,8 +1,8 @@
-import {Component, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
-import {ApexAxisChartSeries, ApexChart, ApexTitleSubtitle, ApexXAxis, ApexYAxis, ChartComponent} from "ng-apexcharts";
-import {OrderService} from "../services/order-service";
-import {Order, ShippingStatus} from "../interfaces/order-interface";
+import { ApexAxisChartSeries, ApexChart, ApexTitleSubtitle, ApexXAxis, ApexYAxis, ChartComponent } from "ng-apexcharts";
+import { Order, ShippingStatus } from "../interfaces/order-interface";
+import { OrderService } from "../services/order-service";
 
 
 export type ChartOptions = {
@@ -17,20 +17,23 @@ export type ChartOptions = {
   selector: 'app-home',
   templateUrl: './home.component.html',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   @ViewChild("chart") chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
   latestOrders: Order[] = [];
   ordersCount: number = 0;
   boxesSold: number = 0;
+
+  async ngOnInit(): Promise<void> {
+    await this.loadOrders();
+    await this.loadStatistics();
+    this.data = await this.fetchDataForChart();
+  }
+
   ordersToday: number = 0;
   data: number[] = [];
 
   constructor(public orderService: OrderService) {
-    this.loadOrders();
-    this.loadStatistics();
-    this.fetchDataForChart().then(data => this.data = data);
-
     this.chartOptions = {
       series: [
         {
@@ -85,7 +88,7 @@ export class HomeComponent {
     const data = [] as number[];
 
     for (let i = 0; i < 12; i++) {
-      data.push(monthOrderCountMap.get(i)? monthOrderCountMap.get(i)! : 0);
+      data.push(monthOrderCountMap.get(i) ? monthOrderCountMap.get(i)! : 0);
     }
 
     // Create a new object for chartOptions to trigger change detection
