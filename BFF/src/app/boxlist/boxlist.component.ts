@@ -11,10 +11,9 @@ export class BoxListComponent {
 
   constructor(private readonly boxService: BoxService) {
   }
-  
+
   onSearchClick(value: string) {
-    this.boxService.get(1, value);
-    console.log(value); // For testing purpose
+    this.boxService.get(1, this.boxService.pageSize, value);
   }
 
   onEditBox(boxId: string) {

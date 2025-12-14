@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Order, OrderCreateDto, ShippingStatusDto } from "../interfaces/order-interface";
+import { Order, OrderCreateDto, ShippingStatus } from "../interfaces/order-interface";
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,6 @@ import { Order, OrderCreateDto, ShippingStatusDto } from "../interfaces/order-in
 export class OrderService {
   orders: Order[] = [];
   private readonly apiUrl = 'http://localhost:5133/Order';
-  private ordersPromise: Promise<Order[]> | null = null;
 
   constructor(private readonly http: HttpClient) {
     this.initializeData();
@@ -23,9 +22,7 @@ export class OrderService {
   }
 
   async get(): Promise<Order[]> {
-    this.ordersPromise ??= this.fetchOrders();
-
-    this.orders = await this.ordersPromise;
+    this.orders = await this.fetchOrders();
     return this.orders;
   }
 
@@ -51,8 +48,8 @@ export class OrderService {
     return order;
   }
 
-  public updateStatus(id: string, status: ShippingStatusDto) {
-    return firstValueFrom(this.http.patch<Order>(`${this.apiUrl}/${id}`, status));
+  public updateStatus(id: string, status: ShippingStatus) {
+    return firstValueFrom(this.http.patch<Order>(`${this.apiUrl}/${id}?newStatus=${status}`, null));
   }
   public delete(id: string) {
     return firstValueFrom(this.http.delete(`${this.apiUrl}/${id}`));

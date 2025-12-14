@@ -18,8 +18,8 @@ export class ListComponent {
   }
 
   private loadBoxes() {
-    this.boxService.get(this.currentPage + 1, "10", "").then(result => {
-      this.buttons = new Array(result.pageCount).fill(null);
+    this.boxService.get(this.currentPage + 1).then(result => {
+      this.buttons = new Array(result.totalPages).fill(null);
     })
       .catch(err => {
         console.log(err);
@@ -29,7 +29,7 @@ export class ListComponent {
   async getNextPage(page: number) {
     this.currentPage = page;
     try {
-      await this.boxService.get(this.currentPage + 1, "10", "");
+      await this.boxService.get(this.currentPage + 1);
     } catch (err) {
       console.log(err);
     }
