@@ -20,3 +20,14 @@
       - POSTGRES_DB=BoxFactoryDB
     ports:
       - "5432:5432"
+
+  
+  frontend:
+    image: box-factory-frontend
+    build:
+      context: .
+      dockerfile: Frontend/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
