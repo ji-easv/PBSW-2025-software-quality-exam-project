@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
-import {OrderService} from "../../services/order-service";
-import {ShippingStatus} from "../../interfaces/order-interface";
+import { Component } from '@angular/core';
+import { ShippingStatus } from "../../interfaces/order-interface";
+import { OrderService } from "../../services/order-service";
 
 @Component({
   selector: 'app-order-list',
@@ -15,7 +15,7 @@ export class ListComponent {
   protected readonly ShippingStatus = ShippingStatus;
 
   changeStatus(id: string, status: ShippingStatus) {
-    this.orderService.updateStatus(id, {shippingStatus: status}).then(r => {
+    this.orderService.updateStatus(id, status).then(r => {
       this.orderService.get();
     });
   }
