@@ -7,7 +7,9 @@
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/DotNetCliExePath/@EntryValue">/nix/store/m3ngz3g6pnxnbql0rmy2gqy6ajqdbpva-dotnet-combined/share/dotnet/dotnet</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f95605ae_002D054a_002D40f7_002Db725_002D2b72f04d4eba/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="MappingProfileTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::F139558B-9292-4255-BAD3-DEB34ECA0DC8::net8.0::Core.UnitTests.Mapping.MappingProfileTest&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::F139558B-9292-4255-BAD3-DEB34ECA0DC8::net10.0::Core.UnitTests.Services.BoxService&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::F139558B-9292-4255-BAD3-DEB34ECA0DC8::net10.0::Core.UnitTests.Mapping.MappingProfileTest.MappingProfile_MapsBoxUpdateDtoToBox&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::F139558B-9292-4255-BAD3-DEB34ECA0DC8::net10.0::Core.UnitTests.Mapping.MappingProfileTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	

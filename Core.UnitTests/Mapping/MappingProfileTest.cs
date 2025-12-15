@@ -1,5 +1,6 @@
 using AutoMapper;
 using Core.Mapping;
+using Core.UnitTests.Utils;
 using Models.DTOs;
 using Models.Models;
 
@@ -7,6 +8,7 @@ namespace Core.UnitTests.Mapping;
 
 public class MappingProfileTest
 {
+    
     [Fact]
     public void MappingProfile_ConfigurationIsValid()
     {
@@ -51,50 +53,31 @@ public class MappingProfileTest
         Assert.Equal(boxCreateDto.DimensionsDto.Height, box.Dimensions.Height);
     }
 
-    [Fact]
-    public void MappingProfile_MapsBoxUpdateDtoToBox()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void MappingProfile_MapsBoxUpdateDtoToBox(bool useOpts)
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         var mapper = config.CreateMapper();
-        var boxUpdateDto = new BoxUpdateDto
+
+        var boxUpdateDto = BoxUtils.CreateBoxUpdateDto();
+        var existingBox = BoxUtils.CreateExistingBox();
+
+        Box box;
+        if (useOpts)
         {
-            Color = "Blue",
-            Price = 29.99f,
-            DimensionsDto = new DimensionsDto
+            box = mapper.Map(boxUpdateDto, existingBox, opts =>
             {
-                Length = 15,
-                Width = 10,
-                Height = 8
-            },
-            Stock = 20,
-            Weight = 8,
-            Material = "Wood"
-        };
-        
-        var existingBox = new Box
+                opts.Items["Id"] = existingBox.Id;
+                opts.Items["CreatedAt"] = existingBox.CreatedAt;
+            });
+        }
+        else
         {
-            Id = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow.AddDays(-1),
-            Color = "Red",
-            Price = 19.99f,
-            Stock = 10,
-            Weight = 5,
-            Material = "Plastic",
-            Dimensions = new Dimensions
-            {
-                Id = Guid.NewGuid(),
-                Length = 10,
-                Width = 5,
-                Height = 3
-            }
-        };
-        
-        var box = mapper.Map(boxUpdateDto, existingBox, opts =>
-        {
-            opts.Items["Id"] = existingBox.Id;
-            opts.Items["CreatedAt"] = existingBox.CreatedAt;
-        });
-        
+            box = mapper.Map(boxUpdateDto, existingBox);
+        }
+
         Assert.Equal(existingBox.Id, box.Id);
         Assert.Equal(existingBox.CreatedAt, box.CreatedAt);
         Assert.Equal(boxUpdateDto.Color, box.Color);

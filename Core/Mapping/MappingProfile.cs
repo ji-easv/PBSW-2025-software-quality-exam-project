@@ -38,8 +38,9 @@ public class MappingProfile : Profile
                     }))
             .AfterMap((src, dest, ctx) =>
             {
-                dest.Id = (Guid)ctx.Items["Id"];
-                dest.CreatedAt = (DateTime)ctx.Items["CreatedAt"];
+                if (!ctx.TryGetItems(out var items)) return;
+                if (items.TryGetValue("Id", out var id)) dest.Id = (Guid)id!;
+                if (items.TryGetValue("CreatedAt", out var createdAt)) dest.CreatedAt = (DateTime)createdAt!;
             });
 
         CreateMap<Dimensions, DimensionsDto>();
