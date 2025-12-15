@@ -27,6 +27,9 @@ jobs:
         run: npx playwright install --with-deps
         working-directory: Frontend
 
+      - name: Run the application
+        run: docker compose up -d --build
+
       - name: Run Playwright tests
         run: npx playwright test
         working-directory: Frontend
