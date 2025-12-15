@@ -25,7 +25,7 @@ public class BoxServiceTests
     [Fact]
     public async Task GetBoxByIdAsync_BoxExists_ReturnsBox()
     {
-        var boxId = BoxUtils.InsertBoxInDb(_boxRepository).Id;
+        var boxId = ModelUtils.InsertBoxInDb(_boxRepository).Id;
         var result = await _boxService.GetBoxByIdAsync(boxId);
 
         Assert.NotNull(result);
@@ -43,7 +43,7 @@ public class BoxServiceTests
     [Fact]
     public async Task CreateBox_ValidBox_ReturnsCreatedBox()
     {
-        var boxCreateDto = BoxUtils.CreateBoxCreateDto();
+        var boxCreateDto = ModelUtils.CreateBoxCreateDto();
 
         _boxRepository.Setup(repo => repo.CreateBoxAsync(It.IsAny<Box>()))
             .ReturnsAsync((Box box) => box);
@@ -63,7 +63,7 @@ public class BoxServiceTests
     [InlineData("Transparent")]
     public async Task CreateBox_InvalidColor_ThrowsValidationException(string invalidColor)
     {
-        var box = BoxUtils.CreateBoxCreateDto();
+        var box = ModelUtils.CreateBoxCreateDto();
         box.Color = invalidColor;
         await Assert.ThrowsAsync<ValidationException>(() => _boxService.CreateBoxAsync(box));
     }
@@ -73,7 +73,7 @@ public class BoxServiceTests
     [InlineData("Moss")]
     public async Task CreateBox_InvalidMaterial_ThrowsValidationException(string invalidMaterial)
     {
-        var box = BoxUtils.CreateBoxCreateDto();
+        var box = ModelUtils.CreateBoxCreateDto();
         box.Material = invalidMaterial;
         await Assert.ThrowsAsync<ValidationException>(() => _boxService.CreateBoxAsync(box));
     }
@@ -81,7 +81,7 @@ public class BoxServiceTests
     [Fact]
     public async Task DeleteBoxAsync_BoxExists_DeletesBox()
     {
-        var box = BoxUtils.InsertBoxInDb(_boxRepository);
+        var box = ModelUtils.InsertBoxInDb(_boxRepository);
         _boxRepository.Setup(repo => repo.DeleteBoxAsync(box)).Returns(Task.CompletedTask);
 
         await _boxService.DeleteBoxAsync(box.Id);
@@ -100,8 +100,8 @@ public class BoxServiceTests
     [Fact]
     public async Task UpdateBoxAsync_BoxExists_ReturnsUpdatedBox()
     {
-        var existingBox = BoxUtils.InsertBoxInDb(_boxRepository);
-        var boxUpdateDto = BoxUtils.CreateBoxUpdateDto();
+        var existingBox = ModelUtils.InsertBoxInDb(_boxRepository);
+        var boxUpdateDto = ModelUtils.CreateBoxUpdateDto();
         
         _boxRepository.Setup(repo => repo.UpdateBoxAsync(It.IsAny<Box>()))
             .ReturnsAsync((Box box) => box);
@@ -121,7 +121,7 @@ public class BoxServiceTests
     {
         var boxId = Guid.NewGuid();
         _boxRepository.Setup(repo => repo.GetBoxByIdAsync(boxId)).ReturnsAsync((Box?)null);
-        var boxUpdateDto = BoxUtils.CreateBoxUpdateDto();
+        var boxUpdateDto = ModelUtils.CreateBoxUpdateDto();
 
         await Assert.ThrowsAsync<Models.Exceptions.NotFoundException>(() => _boxService.UpdateBoxAsync(boxId, boxUpdateDto));
     }

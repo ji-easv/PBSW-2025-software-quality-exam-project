@@ -5,7 +5,7 @@ using Moq;
 
 namespace Core.UnitTests.Utils;
 
-public static class BoxUtils
+public static class ModelUtils
 {
     public static BoxUpdateDto CreateBoxUpdateDto() =>
         new()
@@ -63,4 +63,43 @@ public static class BoxUtils
         boxRepository.Setup(repo => repo.GetBoxByIdAsync(box.Id)).ReturnsAsync(box);
         return box;
     }
+    
+    public static CreateAddressDto CreateAddressDto() =>
+        new()
+        {
+            StreetName = "742 Evergreen Terrace",
+            City = "Springfield",
+            PostalCode = "62704",
+            Country = "USA",
+            HouseNumber = 12,
+            HouseNumberAddition = "A"
+        };
+    
+    public static CreateCustomerDto CreateCustomerDto () =>
+        new()
+        {
+            FirstName = "Homer",
+            LastName = "Simpson",
+            Email = "homer.simpson@app.com",
+            CreateAddressDto = CreateAddressDto()
+        };
+
+    public static Customer CreateCustomer() =>
+        new()
+        {
+            FirstName = "Homer",
+            LastName = "Simpson",
+            Email = "homer.simpson@app.com",
+            SimpsonImgUrl = "/assets/img/Homer.png",
+            Address = new Address
+            {
+                Id = Guid.NewGuid(),
+                StreetName = "742 Evergreen Terrace",
+                City = "Springfield",
+                PostalCode = "62704",
+                Country = "USA",
+                HouseNumber = 12,
+                HouseNumberAddition = "A"
+            }
+        };
 }

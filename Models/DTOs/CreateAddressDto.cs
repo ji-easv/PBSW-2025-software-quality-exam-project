@@ -5,15 +5,15 @@ namespace Models.DTOs;
 
 public class CreateAddressDto
 {
-    [Required] [MinLength(1)] public string StreetName { get; set; } = null!;
+    [MinLength(1)] public required string StreetName { get; set; } = null!;
 
-    [Required] [PositiveNumber] public int HouseNumber { get; set; }
+    [PositiveNumber] public required int HouseNumber { get; set; }
 
     public string? HouseNumberAddition { get; set; }
 
-    [Required] [MinLength(1)] public string City { get; set; } = null!;
+    [MinLength(1)] public required string City { get; set; } = null!;
 
-    [Required] [MinLength(1)] public string Country { get; set; } = null!;
+    [MinLength(1)] public required string Country { get; set; } = null!;
 
-    [Required] [MinLength(1)] public string PostalCode { get; set; } = null!;
+    [MinLength(1)] public required string PostalCode { get; set; } = null!;
 }
