@@ -20,10 +20,10 @@ jobs:
         dotnet-version: '10.0.x'
 
     - name: Run Unit Tests
-      run: dotnet test "Core.UnitTests/Core.UnitTests.csproj" --logger:trx
+      run: dotnet test "Core.UnitTests/Core.UnitTests.csproj" --logger:trx --collect:"XPlat Code Coverage"
 
     - name: Run Cucumber tests
-      run: dotnet test "BoxFactory.BDDTests/BoxFactory.BDDTests.csproj" --logger:trx
+      run: dotnet test "BoxFactory.BDDTests/BoxFactory.BDDTests.csproj" --logger:trx --collect:"XPlat Code Coverage"
 
     - name: Run Integration Tests
-      run: dotnet test "BoxFactory.IntegrationTests/BoxFactory.IntegrationTests.csproj" --logger:trx
+      run: dotnet test "BoxFactory.IntegrationTests/BoxFactory.IntegrationTests.csproj" --logger:trx --collect:"XPlat Code Coverage"
