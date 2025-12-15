@@ -19,17 +19,26 @@ jobs:
       with:
         dotnet-version: '10.0.x'
         
+    - name: Set up Java
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+        
     - name: Restore dotnet tools
       run: dotnet tool restore
       
     - name: Run SonarQube Scanner
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        JAVA_HOME: ${{ env.JAVA_HOME }}
       run: |
         dotnet sonarscanner begin \
           /k:"${{ github.repository_owner }}_${{ github.event.repository.name }}" \
           /o:"${{ github.repository_owner }}" \
           /d:sonar.token="$SONAR_TOKEN" \
+          /d:sonar.scanner.skipJreProvisioning=true \
           /d:sonar.cs.vstest.reportsPaths="**/*.trx" \
           /d:sonar.cs.cobertura.reportsPaths="**/coverage.cobertura.xml"
         
@@ -40,12 +49,3 @@ jobs:
         dotnet test "BoxFactory.IntegrationTests/BoxFactory.IntegrationTests.csproj" --logger:trx --collect:"XPlat Code Coverage" --no-build
         
         dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
-
-#    - name: Run Unit Tests
-#      run: dotnet test "Core.UnitTests/Core.UnitTests.csproj" --logger:trx --collect:"XPlat Code Coverage"
-#
-#    - name: Run Cucumber tests
-#      run: dotnet test "BoxFactory.BDDTests/BoxFactory.BDDTests.csproj" --logger:trx --collect:"XPlat Code Coverage"
-#
-#    - name: Run Integration Tests
-#      run: dotnet test "BoxFactory.IntegrationTests/BoxFactory.IntegrationTests.csproj" --logger:trx --collect:"XPlat Code Coverage"
