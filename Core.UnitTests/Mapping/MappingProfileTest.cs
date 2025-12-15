@@ -25,21 +25,7 @@ public class MappingProfileTest
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         var mapper = config.CreateMapper(); 
-        
-        var boxCreateDto = new BoxCreateDto
-        {
-            Color = "Red",
-            Price = 19.99f,
-            DimensionsDto = new DimensionsDto
-            {
-                Length = 10,
-                Width = 5,
-                Height = 3
-            },
-            Stock = 10,
-            Weight = 5,
-            Material = "Plastic"
-        };
+        var boxCreateDto = BoxUtils.CreateBoxCreateDto();
         
         var box = mapper.Map<Box>(boxCreateDto);
         Assert.Equal(boxCreateDto.Color, box.Color);
@@ -90,4 +76,7 @@ public class MappingProfileTest
         Assert.Equal(boxUpdateDto.DimensionsDto.Width, box.Dimensions.Width);
         Assert.Equal(boxUpdateDto.DimensionsDto.Height, box.Dimensions.Height);
     }
+    
+    
+    
 }

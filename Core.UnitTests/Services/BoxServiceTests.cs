@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Core.Mapping;
-using Core.Services.Interfaces;
+using Core.Services;
 using Core.UnitTests.Utils;
 using Infrastructure.Interfaces;
 using Models.Models;
@@ -9,17 +9,17 @@ using Moq;
 
 namespace Core.UnitTests.Services;
 
-public class BoxService
+public class BoxServiceTests
 {
-    private readonly IBoxService _boxService;
+    private readonly BoxService _boxService;
     private readonly Mock<IBoxRepository> _boxRepository;
 
-    public BoxService()
+    public BoxServiceTests()
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         var mapper = config.CreateMapper();
         _boxRepository = new Mock<IBoxRepository>();
-        _boxService = new Core.Services.BoxService(_boxRepository.Object, mapper);
+        _boxService = new BoxService(_boxRepository.Object, mapper);
     }
 
     [Fact]
