@@ -12,7 +12,7 @@
     </tr>
   </thead>
   <tbody>
-    <ng-template ngFor let-box [ngForOf]="boxService.boxes">
+    <ng-template ngFor let-box [ngForOf]="boxes">
       <tr>
         <td> {{box.id}} </td>
         <td class="text-right"> {{box.weight | number:'1.2'}} kg </td>
@@ -34,7 +34,7 @@
                   d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
               </svg>
               update</button>
-            <button class="btn btn-error rounded-md join-item" (click)="deleteBox(box.id)">
+            <button class="btn btn-error rounded-md join-item" (click)="onDeleteBox(box.id)">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="w-5 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -63,9 +63,10 @@
 
 <div class="w-full text-center">
   <div class="join m-auto">
-    <button *ngFor="let button of buttons; let index = index" class="join-item btn"
-      [ngClass]="{'btn-active': index === currentPage}" (click)="getNextPage(index)">
-      {{index + 1}}
+    <button *ngFor="let page of getPageNumbers()" class="join-item btn"
+            [ngClass]="{'btn-active': page === currentPage}"
+            (click)="onPageChanged(page)">
+      {{page}}
     </button>
   </div>
 </div>
