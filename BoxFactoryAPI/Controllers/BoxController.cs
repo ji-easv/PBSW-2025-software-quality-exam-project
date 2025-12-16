@@ -1,6 +1,5 @@
 using Core.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Models;
 using Models.DTOs;
 using Models.Models;
 using Models.Util;
@@ -39,6 +38,6 @@ public class BoxController(IBoxService boxService) : ControllerBase
     public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         await boxService.DeleteBoxAsync(id);
-        return Ok();
+        return NoContent();
     }
 }

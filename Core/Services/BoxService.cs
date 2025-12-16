@@ -74,6 +74,12 @@ public class BoxService(IBoxRepository boxRepository, IMapper mapper) : IBoxServ
 
     public async Task<Box> UpdateBoxAsync(Guid id, BoxUpdateDto boxUpdateDto)
     {
+        if (boxUpdateDto.Color is not null && !_supportedColors.Contains(boxUpdateDto.Color.ToLower()))
+            throw new ValidationException($"Color '{boxUpdateDto.Color}' is not supported.");
+
+        if (boxUpdateDto.Material is not null && !_supportedMaterials.Contains(boxUpdateDto.Material.ToLower()))
+            throw new ValidationException($"Material '{boxUpdateDto.Material}' is not supported.");
+        
         var box = await GetBoxByIdAsync(id);
         box = mapper.Map(boxUpdateDto, box);
         box.UpdatedAt = DateTime.UtcNow;

@@ -1,8 +1,8 @@
 using AutoMapper;
 using Core.Mapping;
-using Core.UnitTests.Utils;
 using Models.DTOs;
 using Models.Models;
+using TestUtils;
 
 namespace Core.UnitTests.Mapping;
 
@@ -25,7 +25,7 @@ public class MappingProfileTest
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         var mapper = config.CreateMapper(); 
-        var boxCreateDto = ModelUtils.CreateBoxCreateDto();
+        var boxCreateDto = ModelUtils.ValidBoxCreateDto();
         
         var box = mapper.Map<Box>(boxCreateDto);
         Assert.Equal(boxCreateDto.Color, box.Color);
@@ -47,8 +47,9 @@ public class MappingProfileTest
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         var mapper = config.CreateMapper();
 
-        var boxUpdateDto = ModelUtils.CreateBoxUpdateDto();
-        var existingBox = ModelUtils.CreateExistingBox();
+        var boxUpdateDto = ModelUtils.ValidBoxUpdateDto();
+        var existingBox = ModelUtils.ValidBox();
+        var dimensionsId = existingBox.Dimensions!.Id;
 
         Box box;
         if (useOpts)
@@ -57,6 +58,7 @@ public class MappingProfileTest
             {
                 opts.Items["Id"] = existingBox.Id;
                 opts.Items["CreatedAt"] = existingBox.CreatedAt;
+                opts.Items["DimensionsId"] = existingBox.Dimensions!.Id;
             });
         }
         else
@@ -72,6 +74,7 @@ public class MappingProfileTest
         Assert.Equal(boxUpdateDto.Weight, box.Weight);
         Assert.Equal(boxUpdateDto.Material, box.Material);
         Assert.NotNull(box.Dimensions);
+        Assert.Equal(dimensionsId, box.Dimensions.Id);
         Assert.Equal(boxUpdateDto.DimensionsDto!.Length, box.Dimensions!.Length);
         Assert.Equal(boxUpdateDto.DimensionsDto.Width, box.Dimensions.Width);
         Assert.Equal(boxUpdateDto.DimensionsDto.Height, box.Dimensions.Height);
@@ -83,7 +86,7 @@ public class MappingProfileTest
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         var mapper = config.CreateMapper();
 
-        var createAddressDto = ModelUtils.CreateAddressDto();
+        var createAddressDto = ModelUtils.ValidCreateAddressDto();
 
         var address = mapper.Map<Address>(createAddressDto);
         Assert.Equal(createAddressDto.StreetName, address.StreetName);
@@ -101,7 +104,7 @@ public class MappingProfileTest
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         var mapper = config.CreateMapper();
 
-        var createCustomerDto = ModelUtils.CreateCustomerDto();
+        var createCustomerDto = ModelUtils.ValidCreateCustomerDto();
         var customer = mapper.Map<Customer>(createCustomerDto);
         Assert.Equal(createCustomerDto.FirstName, customer.FirstName);
         Assert.Equal(createCustomerDto.LastName, customer.LastName);
@@ -136,8 +139,8 @@ public class MappingProfileTest
 
         var existingBoxes = new List<Box>
         {
-            ModelUtils.CreateExistingBox(),
-            ModelUtils.CreateExistingBox()
+            ModelUtils.ValidBox(),
+            ModelUtils.ValidBox()
         };
         
         var orderCreateDto = new OrderCreateDto
@@ -151,7 +154,7 @@ public class MappingProfileTest
         
         var order = mapper.Map<Order>(orderCreateDto, opts =>
         {
-            opts.Items["Customer"] = ModelUtils.CreateCustomer();
+            opts.Items["Customer"] = ModelUtils.ValidCustomer();
             opts.Items["Boxes"] = existingBoxes;
         });
 

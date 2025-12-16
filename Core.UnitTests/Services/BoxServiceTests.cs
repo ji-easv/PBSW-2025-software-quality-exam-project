@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Core.Mapping;
 using Core.Services;
-using Core.UnitTests.Utils;
 using Infrastructure.Interfaces;
 using Models.Models;
 using Moq;
+using TestUtils;
 
 namespace Core.UnitTests.Services;
 
@@ -21,11 +21,19 @@ public class BoxServiceTests
         _boxRepository = new Mock<IBoxRepository>();
         _boxService = new BoxService(_boxRepository.Object, mapper);
     }
+    
+        
+    private Box InsertBoxInDb()
+    {
+        var box = ModelUtils.ValidBox();
+        _boxRepository.Setup(repo => repo.GetBoxByIdAsync(box.Id)).ReturnsAsync(box);
+        return box;
+    }
 
     [Fact]
     public async Task GetBoxByIdAsync_BoxExists_ReturnsBox()
     {
-        var boxId = ModelUtils.InsertBoxInDb(_boxRepository).Id;
+        var boxId = InsertBoxInDb().Id;
         var result = await _boxService.GetBoxByIdAsync(boxId);
 
         Assert.NotNull(result);
@@ -43,7 +51,7 @@ public class BoxServiceTests
     [Fact]
     public async Task CreateBox_ValidBox_ReturnsCreatedBox()
     {
-        var boxCreateDto = ModelUtils.CreateBoxCreateDto();
+        var boxCreateDto = ModelUtils.ValidBoxCreateDto();
 
         _boxRepository.Setup(repo => repo.CreateBoxAsync(It.IsAny<Box>()))
             .ReturnsAsync((Box box) => box);
@@ -63,7 +71,7 @@ public class BoxServiceTests
     [InlineData("Transparent")]
     public async Task CreateBox_InvalidColor_ThrowsValidationException(string invalidColor)
     {
-        var box = ModelUtils.CreateBoxCreateDto();
+        var box = ModelUtils.ValidBoxCreateDto();
         box.Color = invalidColor;
         await Assert.ThrowsAsync<ValidationException>(() => _boxService.CreateBoxAsync(box));
     }
@@ -73,7 +81,7 @@ public class BoxServiceTests
     [InlineData("Moss")]
     public async Task CreateBox_InvalidMaterial_ThrowsValidationException(string invalidMaterial)
     {
-        var box = ModelUtils.CreateBoxCreateDto();
+        var box = ModelUtils.ValidBoxCreateDto();
         box.Material = invalidMaterial;
         await Assert.ThrowsAsync<ValidationException>(() => _boxService.CreateBoxAsync(box));
     }
@@ -81,7 +89,7 @@ public class BoxServiceTests
     [Fact]
     public async Task DeleteBoxAsync_BoxExists_DeletesBox()
     {
-        var box = ModelUtils.InsertBoxInDb(_boxRepository);
+        var box = InsertBoxInDb();
         _boxRepository.Setup(repo => repo.DeleteBoxAsync(box)).Returns(Task.CompletedTask);
 
         await _boxService.DeleteBoxAsync(box.Id);
@@ -100,8 +108,8 @@ public class BoxServiceTests
     [Fact]
     public async Task UpdateBoxAsync_BoxExists_ReturnsUpdatedBox()
     {
-        var existingBox = ModelUtils.InsertBoxInDb(_boxRepository);
-        var boxUpdateDto = ModelUtils.CreateBoxUpdateDto();
+        var existingBox = InsertBoxInDb();
+        var boxUpdateDto = ModelUtils.ValidBoxUpdateDto();
         
         _boxRepository.Setup(repo => repo.UpdateBoxAsync(It.IsAny<Box>()))
             .ReturnsAsync((Box box) => box);
@@ -121,7 +129,7 @@ public class BoxServiceTests
     {
         var boxId = Guid.NewGuid();
         _boxRepository.Setup(repo => repo.GetBoxByIdAsync(boxId)).ReturnsAsync((Box?)null);
-        var boxUpdateDto = ModelUtils.CreateBoxUpdateDto();
+        var boxUpdateDto = ModelUtils.ValidBoxUpdateDto();
 
         await Assert.ThrowsAsync<Models.Exceptions.NotFoundException>(() => _boxService.UpdateBoxAsync(boxId, boxUpdateDto));
     }

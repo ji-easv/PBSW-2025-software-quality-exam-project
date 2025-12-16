@@ -1,13 +1,11 @@
-using Infrastructure.Interfaces;
 using Models.DTOs;
 using Models.Models;
-using Moq;
 
-namespace Core.UnitTests.Utils;
+namespace TestUtils;
 
 public static class ModelUtils
 {
-    public static BoxUpdateDto CreateBoxUpdateDto() =>
+    public static BoxUpdateDto ValidBoxUpdateDto() =>
         new()
         {
             Color = "Blue",
@@ -18,7 +16,7 @@ public static class ModelUtils
             Material = "Wood"
         };
     
-    public static BoxCreateDto CreateBoxCreateDto() =>
+    public static BoxCreateDto ValidBoxCreateDto() =>
         new()
         {
             Color = "Green",
@@ -29,7 +27,7 @@ public static class ModelUtils
             Material = "Cardboard"
         };
 
-    public static Box CreateExistingBox() =>
+    public static Box ValidBox() =>
         new()
         {
             Id = Guid.NewGuid(),
@@ -48,23 +46,7 @@ public static class ModelUtils
             }
         };
     
-    public static Box InsertBoxInDb(Mock<IBoxRepository> boxRepository)
-    {
-        var box = new Box
-        {
-            Id = Guid.NewGuid(),
-            Color = "Red",
-            Material = "Plastic",
-            Price = 19.99f,
-            Stock = 10,
-            Weight = 5,
-            CreatedAt = DateTime.Now
-        };
-        boxRepository.Setup(repo => repo.GetBoxByIdAsync(box.Id)).ReturnsAsync(box);
-        return box;
-    }
-    
-    public static CreateAddressDto CreateAddressDto() =>
+    public static CreateAddressDto ValidCreateAddressDto() =>
         new()
         {
             StreetName = "742 Evergreen Terrace",
@@ -75,16 +57,16 @@ public static class ModelUtils
             HouseNumberAddition = "A"
         };
     
-    public static CreateCustomerDto CreateCustomerDto () =>
+    public static CreateCustomerDto ValidCreateCustomerDto () =>
         new()
         {
             FirstName = "Homer",
             LastName = "Simpson",
             Email = "homer.simpson@app.com",
-            CreateAddressDto = CreateAddressDto()
+            CreateAddressDto = ValidCreateAddressDto()
         };
 
-    public static Customer CreateCustomer() =>
+    public static Customer ValidCustomer() =>
         new()
         {
             FirstName = "Homer",
@@ -102,4 +84,34 @@ public static class ModelUtils
                 HouseNumberAddition = "A"
             }
         };
+    
+    public static BoxCreateDto Clone(BoxCreateDto dto) => new()
+    {
+        Color = dto.Color,
+        Price = dto.Price,
+        DimensionsDto = new DimensionsDto
+        {
+            Length = dto.DimensionsDto.Length,
+            Width = dto.DimensionsDto.Width,
+            Height = dto.DimensionsDto.Height
+        },
+        Stock = dto.Stock,
+        Weight = dto.Weight,
+        Material = dto.Material
+    };
+    
+    public static BoxUpdateDto Clone(BoxUpdateDto dto) => new()
+    {
+        Color = dto.Color,
+        Price = dto.Price,
+        DimensionsDto = new DimensionsDto
+        {
+            Length = dto.DimensionsDto.Length,
+            Width = dto.DimensionsDto.Width,
+            Height = dto.DimensionsDto.Height
+        },
+        Stock = dto.Stock,
+        Weight = dto.Weight,
+        Material = dto.Material
+    };
 }

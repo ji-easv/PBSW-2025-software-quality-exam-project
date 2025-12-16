@@ -20,6 +20,8 @@ test-backend:
 	@echo "Running tests..."
 	dotnet build --no-incremental
 
+	
+
 	dotnet coverlet ./Core.UnitTests/bin/Debug/net10.0/Core.UnitTests.dll \
               --target "dotnet" \
               --targetargs "test ./Core.UnitTests/Core.UnitTests.csproj --no-build --logger:trx" \
