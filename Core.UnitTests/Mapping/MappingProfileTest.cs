@@ -1,5 +1,6 @@
 using AutoMapper;
 using Core.Mapping;
+using Core.UnitTests.Utils;
 using Models.DTOs;
 using Models.Models;
 
@@ -7,6 +8,7 @@ namespace Core.UnitTests.Mapping;
 
 public class MappingProfileTest
 {
+    
     [Fact]
     public void MappingProfile_ConfigurationIsValid()
     {
@@ -23,21 +25,7 @@ public class MappingProfileTest
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         var mapper = config.CreateMapper(); 
-        
-        var boxCreateDto = new BoxCreateDto
-        {
-            Color = "Red",
-            Price = 19.99f,
-            DimensionsDto = new DimensionsDto
-            {
-                Length = 10,
-                Width = 5,
-                Height = 3
-            },
-            Stock = 10,
-            Weight = 5,
-            Material = "Plastic"
-        };
+        var boxCreateDto = ModelUtils.CreateBoxCreateDto();
         
         var box = mapper.Map<Box>(boxCreateDto);
         Assert.Equal(boxCreateDto.Color, box.Color);
@@ -51,50 +39,31 @@ public class MappingProfileTest
         Assert.Equal(boxCreateDto.DimensionsDto.Height, box.Dimensions.Height);
     }
 
-    [Fact]
-    public void MappingProfile_MapsBoxUpdateDtoToBox()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void MappingProfile_MapsBoxUpdateDtoToBox(bool useOpts)
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
         var mapper = config.CreateMapper();
-        var boxUpdateDto = new BoxUpdateDto
+
+        var boxUpdateDto = ModelUtils.CreateBoxUpdateDto();
+        var existingBox = ModelUtils.CreateExistingBox();
+
+        Box box;
+        if (useOpts)
         {
-            Color = "Blue",
-            Price = 29.99f,
-            DimensionsDto = new DimensionsDto
+            box = mapper.Map(boxUpdateDto, existingBox, opts =>
             {
-                Length = 15,
-                Width = 10,
-                Height = 8
-            },
-            Stock = 20,
-            Weight = 8,
-            Material = "Wood"
-        };
-        
-        var existingBox = new Box
+                opts.Items["Id"] = existingBox.Id;
+                opts.Items["CreatedAt"] = existingBox.CreatedAt;
+            });
+        }
+        else
         {
-            Id = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow.AddDays(-1),
-            Color = "Red",
-            Price = 19.99f,
-            Stock = 10,
-            Weight = 5,
-            Material = "Plastic",
-            Dimensions = new Dimensions
-            {
-                Id = Guid.NewGuid(),
-                Length = 10,
-                Width = 5,
-                Height = 3
-            }
-        };
-        
-        var box = mapper.Map(boxUpdateDto, existingBox, opts =>
-        {
-            opts.Items["Id"] = existingBox.Id;
-            opts.Items["CreatedAt"] = existingBox.CreatedAt;
-        });
-        
+            box = mapper.Map(boxUpdateDto, existingBox);
+        }
+
         Assert.Equal(existingBox.Id, box.Id);
         Assert.Equal(existingBox.CreatedAt, box.CreatedAt);
         Assert.Equal(boxUpdateDto.Color, box.Color);
@@ -106,5 +75,91 @@ public class MappingProfileTest
         Assert.Equal(boxUpdateDto.DimensionsDto!.Length, box.Dimensions!.Length);
         Assert.Equal(boxUpdateDto.DimensionsDto.Width, box.Dimensions.Width);
         Assert.Equal(boxUpdateDto.DimensionsDto.Height, box.Dimensions.Height);
+    }
+    
+    [Fact]
+    public void CreateAddressDto_MapsToAddress()
+    {
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+        var mapper = config.CreateMapper();
+
+        var createAddressDto = ModelUtils.CreateAddressDto();
+
+        var address = mapper.Map<Address>(createAddressDto);
+        Assert.Equal(createAddressDto.StreetName, address.StreetName);
+        Assert.Equal(createAddressDto.City, address.City);
+        Assert.Equal(createAddressDto.PostalCode, address.PostalCode);
+        Assert.Equal(createAddressDto.Country, address.Country);
+        Assert.Equal(createAddressDto.HouseNumber, address.HouseNumber);
+        Assert.Equal(createAddressDto.HouseNumberAddition, address.HouseNumberAddition);
+        Assert.NotEqual(Guid.Empty, address.Id);
+    }
+
+    [Fact]
+    public void CreateCustomerDto_MapsToCustomer()
+    {
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+        var mapper = config.CreateMapper();
+
+        var createCustomerDto = ModelUtils.CreateCustomerDto();
+        var customer = mapper.Map<Customer>(createCustomerDto);
+        Assert.Equal(createCustomerDto.FirstName, customer.FirstName);
+        Assert.Equal(createCustomerDto.LastName, customer.LastName);
+        Assert.Equal(createCustomerDto.Email, customer.Email);
+        Assert.NotNull(customer.Address);
+        Assert.NotNull(customer.SimpsonImgUrl);
+    }
+
+    [Fact]
+    public void OrderCreateDto_MapsToOrder_WithoutOptsFails()
+    {
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+        var mapper = config.CreateMapper();
+
+        var orderCreateDto = new OrderCreateDto
+        {
+            Boxes = new Dictionary<Guid, int>
+            {
+                { Guid.NewGuid(), 2 },
+                { Guid.NewGuid(), 3 }
+            }
+        };
+
+        Assert.Throws<ArgumentException>(() => mapper.Map<Order>(orderCreateDto));
+    }
+
+    [Fact]
+    public void OrderCreateDto_MapsToOrder_WithOptsSucceeds()
+    {
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+        var mapper = config.CreateMapper();
+
+        var existingBoxes = new List<Box>
+        {
+            ModelUtils.CreateExistingBox(),
+            ModelUtils.CreateExistingBox()
+        };
+        
+        var orderCreateDto = new OrderCreateDto
+        {
+            Boxes = new Dictionary<Guid, int>
+            {
+                { existingBoxes[0].Id, 2 },
+                { existingBoxes[1].Id, 3 }
+            }
+        };
+        
+        var order = mapper.Map<Order>(orderCreateDto, opts =>
+        {
+            opts.Items["Customer"] = ModelUtils.CreateCustomer();
+            opts.Items["Boxes"] = existingBoxes;
+        });
+
+        Assert.NotEqual(Guid.Empty, order.Id);
+        Assert.Equal(5, order.TotalBoxes);
+        Assert.Equal(ShippingStatus.Received, order.ShippingStatus);
+        Assert.NotNull(order.Customer);
+        Assert.NotNull(order.Boxes);
+        Assert.Equal(Math.Round(99.95, 2), Math.Round(order.TotalPrice, 2));
     }
 }

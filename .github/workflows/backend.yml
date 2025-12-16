@@ -9,6 +9,7 @@ on:
 
 jobs:
   backend-tests:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -32,12 +33,7 @@ jobs:
           /o:"${{ github.repository_owner }}" \
           /d:sonar.token="$SONAR_TOKEN" \
           /d:sonar.cs.vstest.reportsPaths="**/*.trx" \
-          /d:sonar.cs.cobertura.reportsPaths="**/coverage.cobertura.xml"
-        
-        dotnet build --no-incremental
-        
-        dotnet test "Core.UnitTests/Core.UnitTests.csproj" --logger:trx --collect:"XPlat Code Coverage" --no-build
-        dotnet test "BoxFactory.BDDTests/BoxFactory.BDDTests.csproj" --logger:trx --collect:"XPlat Code Coverage" --no-build
-        dotnet test "BoxFactory.IntegrationTests/BoxFactory.IntegrationTests.csproj" --logger:trx --collect:"XPlat Code Coverage" --no-build
-        
+          /d:sonar.cs.opencover.reportsPaths="coverage.*.xml"
+                
+        make test-backend
         dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"

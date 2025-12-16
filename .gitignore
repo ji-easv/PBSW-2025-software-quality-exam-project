@@ -9,3 +9,8 @@
 **/TestResults
 
 .devenv
+
+**/coverage*.xml
+**/coverage*.json
+
+*.DotSettings.user

@@ -38,12 +38,11 @@ public class MappingProfile : Profile
                     }))
             .AfterMap((src, dest, ctx) =>
             {
-                dest.Id = (Guid)ctx.Items["Id"];
-                dest.CreatedAt = (DateTime)ctx.Items["CreatedAt"];
+                if (!ctx.TryGetItems(out var items)) return;
+                if (items.TryGetValue("Id", out var id)) dest.Id = (Guid)id!;
+                if (items.TryGetValue("CreatedAt", out var createdAt)) dest.CreatedAt = (DateTime)createdAt!;
             });
-
-        CreateMap<Dimensions, DimensionsDto>();
-
+        
         CreateMap<CreateAddressDto, Address>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
             .ReverseMap();
@@ -59,14 +58,24 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.ShippingStatus, opt => opt.MapFrom(_ => ShippingStatus.Received))
             .ForMember(dest => dest.TotalBoxes,
                 opt => opt.MapFrom(src => src.Boxes.Values.Sum()))
-            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.Boxes.Values.Sum()))
             .ForMember(dest => dest.Boxes, opt => opt.Ignore())
             .ForMember(dest => dest.Customer, opt => opt.Ignore())
+            .ForMember(dest => dest.TotalPrice, opt => opt.Ignore())
             .AfterMap((src, dest, ctx) =>
             {
-                dest.Boxes = (List<Box>)ctx.Items["Boxes"];
-                dest.Customer = (Customer)ctx.Items["Customer"];
-                dest.TotalPrice = ((List<Box>)ctx.Items["Boxes"]).Sum(b => b.Price * src.Boxes[b.Id]);
+                if (!ctx.TryGetItems(out var items))
+                    throw new ArgumentException("Mapping context items are required but were not provided.");
+
+                if (!items.TryGetValue("Boxes", out var boxesObj) || boxesObj is not List<Box> boxes)
+                    throw new ArgumentException("'Boxes' item (List<Box>) is required in mapping context.");
+
+                dest.Boxes = boxes;
+                dest.TotalPrice = boxes.Sum(b => b.Price * src.Boxes.GetValueOrDefault(b.Id, 0));
+
+                if (!items.TryGetValue("Customer", out var customerObj) || customerObj is not Customer customer)
+                    throw new ArgumentException("'Customer' item (Customer) is required in mapping context.");
+
+                dest.Customer = customer;
             });
     }
 
