@@ -12,13 +12,16 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+if (builder.Environment.EnvironmentName != "Testing")
 {
-    var connectionString = builder.Configuration.GetConnectionString("BoxFactoryDatabase") ??
-                           throw new InvalidOperationException(
-                               "Connection string 'BoxFactoryDatabase' not found.");
-    options.UseNpgsql(connectionString);
-});
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    {
+        var connectionString = builder.Configuration.GetConnectionString("BoxFactoryDatabase") ??
+                               throw new InvalidOperationException(
+                                   "Connection string 'BoxFactoryDatabase' not found.");
+        options.UseNpgsql(connectionString);
+    });
+}
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

@@ -45,7 +45,7 @@ public class CustomWebApplicationFactory
                 x.UseNpgsql(connectionString));
         });
         
-        builder.UseEnvironment("Development");
+        builder.UseEnvironment("Testing");
     }
     
     public async Task InitializeAsync()
