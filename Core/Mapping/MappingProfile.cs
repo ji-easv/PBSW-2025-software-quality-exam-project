@@ -8,41 +8,8 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<BoxCreateDto, Box>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
-            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
-            .ForMember(dest => dest.Dimensions,
-                opt => opt
-                    .MapFrom(src => new Dimensions
-                    {
-                        Id = Guid.NewGuid(),
-                        Length = src.DimensionsDto!.Length,
-                        Width = src.DimensionsDto.Width,
-                        Height = src.DimensionsDto.Height
-                    }))
-            .ReverseMap();
+        CreateBoxMappers();
 
-        CreateMap<BoxUpdateDto, Box>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
-            .ForMember(dest => dest.Dimensions,
-                opt => opt
-                    .MapFrom(src => new Dimensions
-                    {
-                        Id = Guid.NewGuid(),
-                        Length = src.DimensionsDto!.Length,
-                        Width = src.DimensionsDto.Width,
-                        Height = src.DimensionsDto.Height
-                    }))
-            .AfterMap((src, dest, ctx) =>
-            {
-                if (!ctx.TryGetItems(out var items)) return;
-                if (items.TryGetValue("Id", out var id)) dest.Id = (Guid)id!;
-                if (items.TryGetValue("CreatedAt", out var createdAt)) dest.CreatedAt = (DateTime)createdAt!;
-            });
-        
         CreateMap<CreateAddressDto, Address>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
             .ReverseMap();
@@ -50,7 +17,7 @@ public class MappingProfile : Profile
         CreateMap<CreateCustomerDto, Customer>()
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.CreateAddressDto))
             .ForMember(dest => dest.SimpsonImgUrl, opt => opt.MapFrom(_ => GetRandomSimpsonImage()));
-        
+
         CreateMap<OrderCreateDto, Order>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(_ => Guid.NewGuid()))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
@@ -90,5 +57,55 @@ public class MappingProfile : Profile
             "/assets/img/Homer.png"
         };
         return simpsons[random.Next(simpsons.Count)];
+    }
+
+    private void CreateBoxMappers()
+    {
+        CreateMap<BoxCreateDto, Box>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.Dimensions,
+                opt => opt
+                    .MapFrom(src => new Dimensions
+                    {
+                        Id = Guid.NewGuid(),
+                        Length = src.DimensionsDto!.Length,
+                        Width = src.DimensionsDto.Width,
+                        Height = src.DimensionsDto.Height
+                    }))
+            .ReverseMap();
+
+        CreateMap<BoxUpdateDto, Box>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.Dimensions,
+                opt => opt.Ignore())
+            .AfterMap((src, dest, ctx) =>
+            {
+                if (ctx.TryGetItems(out var items))
+                {
+                    if (items.TryGetValue("Id", out var id)) dest.Id = (Guid)id!;
+                    if (items.TryGetValue("CreatedAt", out var createdAt)) dest.CreatedAt = (DateTime)createdAt!;
+                    if (items.TryGetValue("DimensionsId", out var dimensionsId))
+                    {
+                        dest.Dimensions = new Dimensions
+                        {
+                            Id = (Guid)dimensionsId!,
+                            Length = dest.Dimensions?.Length ?? 0,
+                            Width = dest.Dimensions?.Width ?? 0,
+                            Height = dest.Dimensions?.Height ?? 0
+                        };
+                    }
+                }
+
+                if (src.DimensionsDto != null && dest.Dimensions != null)
+                {
+                    dest.Dimensions.Length = src.DimensionsDto.Length;
+                    dest.Dimensions.Width = src.DimensionsDto.Width;
+                    dest.Dimensions.Height = src.DimensionsDto.Height;
+                }
+            });
     }
 }

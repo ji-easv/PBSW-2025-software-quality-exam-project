@@ -9,13 +9,14 @@ using Infrastructure.Implementations;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("BoxFactoryDatabase") ??
-                           throw new InvalidOperationException("Connection string 'BoxFactoryDatabase' not found.");
-    ;
+                           throw new InvalidOperationException(
+                               "Connection string 'BoxFactoryDatabase' not found.");
     options.UseNpgsql(connectionString);
 });
 
@@ -81,4 +82,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
