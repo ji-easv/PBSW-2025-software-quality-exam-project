@@ -23,6 +23,6 @@ RUN dotnet publish "./BoxFactoryAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 
 FROM base AS final
 WORKDIR /app
-HEALTHCHECK CMD curl --fail http://localhost:8080/health || exit 1\
+HEALTHCHECK CMD curl --fail http://localhost:8080/health || exit 1
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "BoxFactoryAPI.dll"]

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom, Observable } from 'rxjs';
 import { Box, BoxCreateDto, BoxUpdateDto, SearchBoxResult } from "../interfaces/box-inteface";
+import {environment} from "../../environments/environment.development";
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,10 @@ export class BoxService {
   boxes: Box[] = [];
   pageSize: number = 10;
 
-  public totalPages?: number;
-  public currentPage?: number;
+  public totalPages: number = 1;
+  public currentPage: number = 1;
 
-  private readonly apiUrl = 'http://localhost:5133/box';
+  private readonly apiUrl = `${environment.apiUrl}/box`;
 
   constructor(private readonly http: HttpClient) {
     this.initializeData();
@@ -21,13 +22,17 @@ export class BoxService {
 
   private initializeData(): void {
     // Fire-and-forget: start the async operation without awaiting
-    this.get(1, this.pageSize).catch(error => {
+    this.get(1).catch(error => {
       console.error('Failed to preload boxes:', error);
     });
   }
 
-  async get(currentPage: number, count?: number, searchTerm?: string) {
-    const url = `${this.apiUrl}?currentPage=${currentPage}&boxesPerPage=${count}&searchTerm=${searchTerm ?? ''}`;
+  async get(currentPage: number, searchTerm?: string) {
+    let url = `${this.apiUrl}?currentPage=${currentPage}&boxesPerPage=${this.pageSize}`;
+    if (searchTerm) {
+      url = url.concat(`&searchTerm=${encodeURIComponent(searchTerm)}`);
+    }
+
     const call = this.http.get<SearchBoxResult>(url);
     let result = await firstValueFrom(call);
     this.boxes = result.boxes;
