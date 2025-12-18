@@ -1,4 +1,5 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+RUN apt-get update && apt-get install -y curl
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
@@ -22,5 +23,6 @@ RUN dotnet publish "./BoxFactoryAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 
 FROM base AS final
 WORKDIR /app
+HEALTHCHECK CMD curl --fail http://localhost:8080/health || exit 1\
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "BoxFactoryAPI.dll"]
