@@ -15,6 +15,8 @@ test('Home page renders correctly', async ({page}) => {
     "Stats"
   ]
 
+  await page.waitForLoadState("networkidle");
+
   expect(requests.length).toBe(expectedRequests.length);
 
   for (const request of requests) {

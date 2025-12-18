@@ -35,6 +35,7 @@ test('Box search functionality works', async ({page}) => {
   expect(searchRequest).toBeDefined();
   const searchResponse = await searchRequest!.response();
   expect(searchResponse).not.toBeNull();
+
   if (searchResponse) {
     expect(searchResponse.status()).toBe(200);
     const responseBody = await searchResponse.json();
