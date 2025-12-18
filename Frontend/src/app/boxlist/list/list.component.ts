@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { BoxUpdateDto } from "../../interfaces/box-inteface";
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Box, BoxUpdateDto} from "../../interfaces/box-inteface";
 import { BoxService } from "../../services/box-service";
 
 @Component({
@@ -7,52 +7,31 @@ import { BoxService } from "../../services/box-service";
   templateUrl: './list.component.html',
 })
 export class ListComponent {
-  @Output() editBox = new EventEmitter<string>();
+  @Input() boxes: Box[] = [];
+  @Input() currentPage: number = 1;
+  @Input() totalPages: number = 1;
 
-  currentPage: number = 0;
-  // @ts-ignore
-  buttons: any[];
+  @Output() editBoxPressed = new EventEmitter<string>();
+  @Output() deleteBoxPressed = new EventEmitter<string>();
+  @Output() pageChanged = new EventEmitter<number>();
 
-  constructor(public boxService: BoxService) {
-    this.loadBoxes();
-  }
-
-  private loadBoxes() {
-    this.boxService.get(this.currentPage + 1).then(result => {
-      this.buttons = new Array(result.totalPages).fill(null);
-    })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-
-  async getNextPage(page: number) {
-    this.currentPage = page;
-    try {
-      await this.boxService.get(this.currentPage + 1);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async deleteBox(boxId: string) {
-    try {
-      this.boxService.delete(boxId);
-      this.boxService.boxes = this.boxService.boxes.filter(b => b.id != boxId);
-    } catch (error) {
-      console.error(error);
-    }
+  onDeleteBox(boxId: string) {
+    this.deleteBoxPressed.emit(boxId);
   }
 
   onEditBox(boxId: string) {
-    this.editBox.emit(boxId);
+    this.editBoxPressed.emit(boxId);
   }
 
-  async updateBox(boxId: string, boxUpdateDto: BoxUpdateDto) {
-    try {
-      await this.boxService.update(boxId, boxUpdateDto);
-    } catch (error) {
-      console.error(error);
+  onPageChanged(page: number) {
+    this.pageChanged.emit(page);
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      pages.push(i);
     }
+    return pages;
   }
 }
