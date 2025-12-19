@@ -31,8 +31,6 @@ jobs:
       - name: Run the application
         run: |
           docker compose up -d --build
-          sleep 5
-          docker compose logs backend
 
       - name: Run Playwright tests
         run: npx playwright test
