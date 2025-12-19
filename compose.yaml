@@ -10,7 +10,8 @@
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__BoxFactoryDatabase=Host=db;Database=BoxFactoryDB;Username=boxfactoryuser;Password=boxfactorypassword
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres
@@ -20,6 +21,12 @@
       - POSTGRES_DB=BoxFactoryDB
     ports:
       - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "BoxFactoryDB" ]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
 
   frontend:
     image: box-factory-frontend
