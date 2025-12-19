@@ -10,7 +10,7 @@ on:
 jobs:
   e2e-tests:
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
