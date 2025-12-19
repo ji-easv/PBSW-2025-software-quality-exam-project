@@ -27,16 +27,6 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
         working-directory: Frontend
-        
-      - name: Run and Debug Backend
-        run: |
-          docker compose up -d --build || true
-          echo "Checking container status..."
-          docker ps -a
-          echo "Fetching backend logs..."
-          docker logs $(docker ps -aqf "name=backend")
-          echo "Fetching dmesg for kernel errors..."
-          sudo dmesg | tail -n 20
 
       - name: Run the application
         run: |
