@@ -1,4 +1,4 @@
-name: frontend.yml
+name: Frontend tests and code quality checks
 on:
   push:
     branches:
@@ -25,5 +25,5 @@ jobs:
         working-directory: Frontend
 
       - name: Run frontend tests
-        run: ng test --no-watch --no-progress --browsers=ChromeHeadless
+        run: npm test --no-watch --no-progress --browsers=ChromeHeadless
         working-directory: Frontend
