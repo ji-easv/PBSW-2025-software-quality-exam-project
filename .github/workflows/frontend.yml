@@ -1,16 +1,32 @@
-name: frontend.yml
+name: Frontend tests and code quality checks
 on:
-    push:
-        branches:
-        - main
-    pull_request:
-        branches:
-        - main
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-    frontend-tests:
-        timeout-minutes: 10
-        runs-on: ubuntu-latest
-        steps:
-        - name: Checkout repository
-          uses: actions/checkout@v6
+  frontend-tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+        working-directory: Frontend
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli --ignore-scripts
+
+      - name: Run frontend tests
+        run: ng test --no-watch --no-progress --browsers=ChromeHeadless
+        working-directory: Frontend
