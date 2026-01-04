@@ -21,7 +21,7 @@
       "commands": [
         "dotnet-sonarscanner"
       ],
-      "rollForward": false
+      "rollForward": false  
     }
   }
 }
