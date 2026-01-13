@@ -121,6 +121,17 @@ Unit Testing
 - Data-driven tests with xUnit Theories
 
 ```csharp +line_numbers
+public static BoxCreateDto ValidBoxCreateDto() =>
+  new()
+  {
+      Color = "Green",
+      Price = 24.99f,
+      DimensionsDto = new DimensionsDto { Length = 12, Width = 7, Height = 5 },
+      Stock = 15,
+      Weight = 6,
+      Material = "Cardboard"
+  };
+
 [Theory]
 [InlineData("Turquoise")]
 [InlineData("Transparent")]
@@ -186,6 +197,20 @@ Scenario Outline: Create a new box
 	  | 10     | 5     | 8      | 5      | 20    | 50    |
 	  | 15     | 10    | 12     | 8      | 30    | 30    |
 	  | 20     | 15    | 10     | 12     | 40    | 20    |
+```
+
+```csharp +line_numbers
+[BeforeScenario(Order = 0)]
+public static async Task StartWebApplication(ScenarioContext scenarioContext)
+{
+    var factory = new CustomWebApplicationFactory();
+    await factory.InitializeAsync();
+    
+    // We create a wrapper so we can store responses when doing requests. This is useful for assertions.
+    var httpClient = factory.CreateClient();
+    scenarioContext.ScenarioContainer.RegisterInstanceAs(httpClient);
+    scenarioContext.ScenarioContainer.RegisterInstanceAs(factory);
+}
 ```
 
 <!-- end_slide -->
